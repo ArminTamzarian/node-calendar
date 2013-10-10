@@ -261,11 +261,12 @@
 
     var _global = this;
 
-    /* Initialization methodology courtesy node-uuid: https://github.com/broofa/node-uuid */
+    /* Initialization methodology and noConflict courtesy node-uuid: https://github.com/broofa/node-uuid */
     if (typeof(module) != 'undefined' && module.exports) {
       // Publish as node.js module
       module.exports = Calendar;
-    } else {
+    }
+    else {
       // Publish as global (in browsers)
       var _previousRoot = _global.calendar;
 
@@ -279,4 +280,3 @@
     }
 
 }).call(this);
-

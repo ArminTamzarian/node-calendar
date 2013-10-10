@@ -1,3 +1,5 @@
+/* Testing methodology courtesy node-uuid: https://github.com/broofa/node-uuid */
+
 if (!this.Calendar) {
   // node.js
   Calendar = require('../node-calendar');
