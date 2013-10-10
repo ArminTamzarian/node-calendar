@@ -77,7 +77,7 @@
     Calendar.prototype.itermonthdates = function(year, month) {
       var date = new Date(year, month - 1, 1);
       var day = this._adjustWeekday(date.getDay());
-      var days = (day - this._firstweekday)  > 0 ? (day - this._firstweekday) % 7 : 7 + (day - this._firstweekday);
+      var days = (day - this._firstweekday)  >= 0 ? (day - this._firstweekday) % 7 : 7 + (day - this._firstweekday);
 
       date.setTime(date.getTime() - (days * this._oneday));
 
@@ -271,11 +271,11 @@
 
       // **`noConflict()` - (browser only) to reset global 'Calendar' var**
       Calendar.noConflict = function() {
-        _global.calendar = _previousRoot;
+        _global.Calendar = _previousRoot;
         return Calendar;
       };
 
-      _global.calendar = Calendar;
+      _global.Calendar = Calendar;
     }
 
 }).call(this);

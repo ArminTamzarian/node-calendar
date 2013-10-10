@@ -4,12 +4,15 @@
   "url"           : "https://github.com/ArminTamzarian/node-calendar",
   "keywords"      : ["calendar", "python"],
   "author"        : "Armin Tamzarian <tamzarian1989@gmail.com>",
-  "scripts": {
-    "test": "node test/test.js"
+  "scripts"       : {
+    "test" : "node test/test.js"
   },
   "lib"           : ".",
   "main"          : "./node-calendar.js",
-  "repository"    : { "type" : "git", "url" : "https://github.com/ArminTamzarian/node-calendar"  },
+  "repository"    : {
+    "type" : "git",
+    "url"  : "https://github.com/ArminTamzarian/node-calendar"
+  },
   "version"       : "0.1.0",
   "license"       : "MIT"
 }
