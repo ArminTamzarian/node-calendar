@@ -80,6 +80,18 @@ describe('calendar', function() {
       assert.equal(range[0], 2);
       assert.equal(range[1], 31);
     });
+
+    it('Tests low invalid boundary case.', function() {
+      assert.throws(function() {
+          calendar.monthrange(2004,0);
+      }, calendar.IllegalMonthError);
+    });
+
+    it('Tests high invalid boundary case.', function() {
+      assert.throws(function() {
+          calendar.monthrange(2004,13);
+      }, calendar.IllegalMonthError);
+    });
   });
 
   describe('Calendar', function() {
@@ -91,6 +103,36 @@ describe('calendar', function() {
       , calendar_sat = new calendar.Calendar(calendar.SATURDAY)
       , calendar_sun = new calendar.Calendar(calendar.SUNDAY)
       , calendar_nul = new calendar.Calendar();
+
+    describe('Calendar()', function(){
+      it('Tests low invalid boundary case.', function() {
+        assert.throws(function() {
+            calendar.Calendar(-1);
+        }, calendar.IllegalWeekdayError);
+      });
+
+      it('Tests high invalid boundary case.', function() {
+        assert.throws(function() {
+            calendar.Calendar(7);
+        }, calendar.IllegalWeekdayError);
+      });
+    });
+
+    describe('#setfirstweekday()', function(){
+      var calendar_test = new calendar.Calendar();
+
+      it('Tests low invalid boundary case.', function() {
+        assert.throws(function() {
+            calendar_test.setfirstweekday(-1);
+        }, calendar.IllegalWeekdayError);
+      });
+
+      it('Tests high invalid boundary case.', function() {
+        assert.throws(function() {
+            calendar_test.setfirstweekday(7);
+        }, calendar.IllegalWeekdayError);
+      });
+    })
 
     describe('#yeardayscalendar()', function(){
       it('No-parameter calendar should equal MONDAY-based calendar.', function() {

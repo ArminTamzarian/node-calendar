@@ -39,19 +39,21 @@ Return true for leap years, false for non-leap years.
 
 * `year` - (Number) Year to test.
 
-### calendar.leapdays(y1, y2)
+### calendar.leapdays(`y1`, `y2`)
 
 Return number of leap years in range [y1, y2). Assumes y1 <= y2.
 
 * `y1` - (Number) Beginning year in the range to test.
 * `y2` - (Number) Ending year in the range to test.
 
-### calendar.monthrange(year, month)
+### calendar.monthrange(`year`, `month`)
 
 Return starting weekday (0-6 ~ Mon-Sun) and number of days (28-31) for year, month.
 
 * `year` - (Number) Year for which the range should be calculated.
 * `month` - (Number) Month for which the range should be calculated.
+
+Throws `IllegalMonthError` if the provided month is invalid.
 
 ### calendar.noconflict()
 
@@ -73,6 +75,8 @@ Base calendar class. This class doesn't do any formatting. It simply provides da
 
 * `firstweekday` - (Number) Numerical day of the week the calendar weeks should start. (0=MON, 1=TUE, ...) Default: 0
 
+Throws `IllegalWeekdayError` if the provided weekday is invalid.
+
 ### calendar.Calendar.getfirstweekday()
 
 Getter for firstweekday
@@ -82,6 +86,8 @@ Getter for firstweekday
 Setter for firstweekday
 
 * `firstweekday` - (Number) Numerical day of the week the calendar weeks should start. (0=MON, 1=TUE, ...)
+
+Throws `IllegalWeekdayError` if the provided weekday is invalid.
 
 ### calendar.Calendar.iterweekdays()
 
@@ -150,7 +156,21 @@ Return the data for the specified year ready for formatting (similar to yeardate
 * `year` - (Number) Year for which the calendar should be generated.
 * `width` - (Number) The number of months to include in each row. Default: 3
 
-### Constants
+## Exceptions
+
+### calendar.IllegalMonthError([`message`])
+
+Error indicating a month index specified outside of the expected range (1-12 ~ Jan-Dec).
+
+* `message` - (String) Optional custom error message.
+
+### calendar.IllegalWeekdayError([`message`])
+
+Error indicating a weekday index specified outside of the expected range (0-6 ~ Mon-Sun).
+
+* `message` - (String) Optional custom error message.
+
+## Constants
 
 * `calendar.MONDAY     = 0`
 * `calendar.TUESDAY    = 1`
@@ -173,8 +193,9 @@ npm test
 ### 0.1.1
 
 * Implementation of `isleap`, `leapdays`, `monthrange`, and `weekday` utility functions.
+* Addition of `IllegalMonthError` and `IllegalWeekdayError` exceptions.
 * Moved `Calendar` to `calendar.Calendar` to more closely match Python package scheme.
-* Refactored testing to [mocha](http://visionmedia.github.io/mocha/) and removed browser-based testing framework.
+* Refactored testing to [Mocha](http://visionmedia.github.io/mocha/) and removed browser-based testing framework.
 * Numerous unit tests added.
 
 ### 0.1.0

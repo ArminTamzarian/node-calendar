@@ -46,9 +46,14 @@
      *
      * @param {Number} year
      * @param {Number} month
+     * @throws {IllegalMonthError} If the provided month is invalid.
      * @api public
      */
     function monthrange(year, month) {
+      if(month < 1 || month > 12) {
+        throw new IllegalMonthError();
+      }
+
       var mdays = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
       var day1 = weekday(year, month, 1);
@@ -76,17 +81,22 @@
      * provides data to subclasses.
      *
      * @param {Number} firstweekday
+     * @throws {IllegalWeekdayError} If the provided firstweekday is invalid.
      * @api public
      */
     function Calendar(firstweekday) {
       this._firstweekday = typeof(firstweekday) === "undefined" ? 0 : firstweekday;
+
+      if(firstweekday < 0 || firstweekday > 6) {
+        throw new IllegalWeekdayError();
+      }
 
       this._oneday = 1000 * 60 * 60 * 24;
       this._onehour = 1000 * 60 * 60;
     }
 
     /**
-     * Getter for firstweekday
+     * GET-er for firstweekday
      *
      * @api public
      */
@@ -95,12 +105,17 @@
     }
 
     /**
-     * Setter for firstweekday
+     * SET-er for firstweekday
      *
      * @param {Number} firstweekday
+     * @throws {IllegalWeekdayError} If the provided firstweekday is invalid.
      * @api public
      */
     Calendar.prototype.setfirstweekday = function(firstweekday) {
+      if(firstweekday < 0 || firstweekday > 6) {
+        throw new IllegalWeekdayError();
+      }
+
       this._firstweekday = firstweekday;
     }
 
@@ -313,6 +328,31 @@
       return rows;
     }
 
+    /**
+     * Error indicating a month index specified outside of the expected range (1-12 ~ Jan-Dec).
+     *
+     * @param {String} message
+     * @api public
+     */
+    function IllegalMonthError(message) {
+      this.name = "IllegalMonthError";
+      this.message = typeof(message) === "undefined" ? "Invalid month specified." : message;
+    }
+    IllegalMonthError.prototype = new Error();
+    IllegalMonthError.prototype.constructor = IllegalMonthError;
+
+    /**
+     * Error indicating a weekday index specified outside of the expected range (0-6 ~ Mon-Sun).
+     *
+     * @param {String} message
+     * @api public
+     */
+    function IllegalWeekdayError(message) {
+      this.name = "IllegalWeekdayError ";
+      this.message = typeof(message) === "undefined" ? "Invalid weekday specified." : message;
+    }
+    IllegalWeekdayError .prototype = new Error();
+    IllegalWeekdayError .prototype.constructor = IllegalWeekdayError ;
 
     // export of package-like object with explicit public API
     var calendar = function() {};
@@ -323,6 +363,9 @@
     calendar.weekday    = weekday;
     calendar.Calendar   = Calendar;
 
+    calendar.IllegalMonthError   = IllegalMonthError
+    calendar.IllegalWeekdayError = IllegalWeekdayError
+
     calendar.MONDAY     = 0;
     calendar.TUESDAY    = 1;
     calendar.WEDNESDAY  = 2;
@@ -331,10 +374,11 @@
     calendar.SATURDAY   = 5;
     calendar.SUNDAY     = 6;
 
-    var _global = this;
 
     // Initialization methodology and noConflict courtesy node-uuid:
     // https://github.com/broofa/node-uuid
+
+    var _global = this;
 
     // Publish as node.js module
     if (typeof(module) != 'undefined' && module.exports) {
