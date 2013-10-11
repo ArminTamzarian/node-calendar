@@ -172,6 +172,8 @@ Error indicating a weekday index specified outside of the expected range (0-6 ~ 
 
 ## Constants
 
+### Weekdays
+
 * `calendar.MONDAY     = 0`
 * `calendar.TUESDAY    = 1`
 * `calendar.WEDNESDAY  = 2`
@@ -179,6 +181,8 @@ Error indicating a weekday index specified outside of the expected range (0-6 ~ 
 * `calendar.FRIDAY     = 4`
 * `calendar.SATURDAY   = 5`
 * `calendar.SUNDAY     = 6`
+
+### Months
 
 * `calendar.JANUARY    =  1`
 * `calendar.FEBRUARY   =  2`
