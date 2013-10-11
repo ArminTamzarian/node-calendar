@@ -6,6 +6,70 @@
 
 (function() {
 
+    /**
+     * Adjust the provided weekday index from the Javascript index scheme
+     * (SUN=0, MON=1, ...) to the Python scheme (MON=0, TUE=1, ...)
+     *
+     * @api private
+     */
+    function _adjustWeekday(weekday) {
+      return weekday > 0 ? weekday - 1 : 6
+    }
+
+    /**
+     * Return true for leap years, false for non-leap years.
+     *
+     * @param {Number} year
+     * @api public
+     */
+    function isleap(year) {
+      return year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
+    }
+
+    /**
+     * Return number of leap years in range [y1, y2).
+     * Assumes y1 <= y2.
+     *
+     * @param {Number} y1
+     * @param {Number} y2
+     * @api public
+     */
+    function leapdays(y1, y2) {
+      y1--;
+      y2--;
+      return (Math.floor(y2/4) - Math.floor(y1/4)) - (Math.floor(y2/100) - Math.floor(y1/100)) + (Math.floor(y2/400) - Math.floor(y1/400));
+    }
+
+    /**
+     * Return starting weekday (0-6 ~ Mon-Sun) and number of days (28-31) for
+     * year, month.
+     *
+     * @param {Number} year
+     * @param {Number} month
+     * @api public
+     */
+    function monthrange(year, month) {
+      var mdays = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+
+      var day1 = weekday(year, month, 1);
+      var ndays = mdays[month] + (month === 2 && isleap(year));
+
+      return [day1, ndays];
+    }
+
+    /**
+     * Return weekday (0-6 ~ Mon-Sun) for year (1970-...), month (1-12),
+     * day (1-31).
+     *
+     * @param {Number} year
+     * @param {Number} month
+     * @param {Number} day
+     * @api public
+     */
+    function weekday(year, month, day) {
+      var date = new Date(year, month - 1, day);
+      return _adjustWeekday(date.getDay());
+    }
 
     /**
      * Base calendar class. This class doesn't do any formatting. It simply
@@ -19,16 +83,6 @@
 
       this._oneday = 1000 * 60 * 60 * 24;
       this._onehour = 1000 * 60 * 60;
-    }
-
-    /**
-     * Adjust the provided weekday index from the Javascript index scheme
-     * (SUN=0, MON=1, ...) to the Python scheme (MON=0, TUE=1, ...)
-     *
-     * @api private
-     */
-    Calendar.prototype._adjustWeekday = function(weekday) {
-      return weekday > 0 ? weekday - 1 : 6
     }
 
     /**
@@ -76,7 +130,7 @@
      */
     Calendar.prototype.itermonthdates = function(year, month) {
       var date = new Date(year, month - 1, 1);
-      var day = this._adjustWeekday(date.getDay());
+      var day = _adjustWeekday(date.getDay());
       var days = (day - this._firstweekday)  >= 0 ? (day - this._firstweekday) % 7 : 7 + (day - this._firstweekday);
 
       date.setTime(date.getTime() - (days * this._oneday));
@@ -93,7 +147,7 @@
           date.setTime(date.getTime() + this._onehour);
         }
 
-        if(date.getMonth() !== month - 1 && this._adjustWeekday(date.getDay()) === this._firstweekday) {
+        if(date.getMonth() !== month - 1 && _adjustWeekday(date.getDay()) === this._firstweekday) {
           break;
         }
       }
@@ -125,7 +179,7 @@
      */
     Calendar.prototype.itermonthdays2 = function(year, month) {
       return this.itermonthdates(year, month).map(function(value){
-        return value.getMonth() === month - 1 ? [value.getDate(), this._adjustWeekday(value.getDay())] : [0, this._adjustWeekday(value.getDay())];
+        return value.getMonth() === month - 1 ? [value.getDate(), _adjustWeekday(value.getDay())] : [0, _adjustWeekday(value.getDay())];
       }, this);
     }
 
@@ -259,24 +313,49 @@
       return rows;
     }
 
+
+    // export of package-like object with explicit public API
+    var calendar = function() {};
+
+    calendar.isleap     = isleap;
+    calendar.leapdays   = leapdays;
+    calendar.monthrange = monthrange;
+    calendar.weekday    = weekday;
+    calendar.Calendar   = Calendar;
+
+    calendar.MONDAY     = 0;
+    calendar.TUESDAY    = 1;
+    calendar.WEDNESDAY  = 2;
+    calendar.THURSDAY   = 3;
+    calendar.FRIDAY     = 4;
+    calendar.SATURDAY   = 5;
+    calendar.SUNDAY     = 6;
+
     var _global = this;
 
-    /* Initialization methodology and noConflict courtesy node-uuid: https://github.com/broofa/node-uuid */
+    // Initialization methodology and noConflict courtesy node-uuid:
+    // https://github.com/broofa/node-uuid
+
+    // Publish as node.js module
     if (typeof(module) != 'undefined' && module.exports) {
-      // Publish as node.js module
-      module.exports = Calendar;
+      module.exports = calendar;
     }
+
+    // Publish as global (in browsers)
     else {
-      // Publish as global (in browsers)
       var _previousRoot = _global.calendar;
 
-      // **`noConflict()` - (browser only) to reset global 'Calendar' var**
-      Calendar.noConflict = function() {
-        _global.Calendar = _previousRoot;
-        return Calendar;
+      /**
+        * Reset global 'calendar' variable
+        *
+        * @api public
+        */
+      calendar.noconflict = function() {
+        _global.calendar = _previousRoot;
+        return calendar;
       };
 
-      _global.Calendar = Calendar;
+      _global.calendar = calendar;
     }
 
 }).call(this);

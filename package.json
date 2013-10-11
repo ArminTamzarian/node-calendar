@@ -1,18 +1,21 @@
 {
-  "name"          : "node-calendar",
-  "description"   : "A fairly straightforward port of the Python calendar.Calendar class.",
-  "url"           : "https://github.com/ArminTamzarian/node-calendar",
-  "keywords"      : ["calendar", "python"],
-  "author"        : "Armin Tamzarian <tamzarian1989@gmail.com>",
-  "scripts"       : {
-    "test" : "node test/test.js"
+  "name"            : "node-calendar",
+  "description"     : "A fairly straightforward port of the Python calendar package.",
+  "url"             : "https://github.com/ArminTamzarian/node-calendar",
+  "keywords"        : ["calendar", "python"],
+  "author"          : "Armin Tamzarian <tamzarian1989@gmail.com>",
+  "scripts"         : {
+    "test" : "mocha -R spec test/*.js"
   },
-  "lib"           : ".",
-  "main"          : "./node-calendar.js",
-  "repository"    : {
+  "lib"             : ".",
+  "main"            : "./node-calendar.js",
+  "repository"      : {
     "type" : "git",
     "url"  : "https://github.com/ArminTamzarian/node-calendar"
   },
-  "version"       : "0.1.0",
-  "license"       : "MIT"
+  "version"         : "0.1.1",
+  "license"         : "MIT",
+  "devDependencies" : {
+    "mocha" : "1.13.0"
+  }
 }
