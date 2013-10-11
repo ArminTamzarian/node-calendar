@@ -374,6 +374,18 @@
     calendar.SATURDAY   = 5;
     calendar.SUNDAY     = 6;
 
+    calendar.JANUARY    =  1;
+    calendar.FEBRUARY   =  2;
+    calendar.MARCH      =  3;
+    calendar.APRIL      =  4;
+    calendar.MAY        =  5;
+    calendar.JUNE       =  6;
+    calendar.JULY       =  7;
+    calendar.AUGUST     =  8;
+    calendar.SEPTEMBER  =  9;
+    calendar.OCTOBER    = 10;
+    calendar.NOVEMBER   = 11;
+    calendar.DECEMBER   = 12;
 
     // Initialization methodology and noConflict courtesy node-uuid:
     // https://github.com/broofa/node-uuid
