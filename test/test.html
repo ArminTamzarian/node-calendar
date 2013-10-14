@@ -1,0 +1,21 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Mocha Tests</title>
+    <link rel="stylesheet" href="../node_modules/mocha/mocha.css" />
+</head>
+<body>
+    <div id="mocha"></div>
+
+    <script type="text/javascript" src="../node-calendar.js"></script>
+    <script type="text/javascript" src="../node_modules/mocha/mocha.js"></script>
+    <script type="text/javascript">
+        mocha.setup('bdd');
+    </script>
+    <script type="text/javascript" src="data/expected_year.js"></script>
+    <script type="text/javascript" src="test.js"></script>
+    <script type="text/javascript" >
+        mocha.run();
+    </script>
+</body>
+</html>
