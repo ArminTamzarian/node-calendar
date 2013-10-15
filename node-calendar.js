@@ -4,6 +4,13 @@
  * MIT Licensed
  */
 
+try {
+  var cldr = require("cldr");
+}
+catch(err) {
+  cldr = false;
+}
+
 (function() {
 
     /**
@@ -14,6 +21,31 @@
      */
     function _adjustWeekday(weekday) {
       return weekday > 0 ? weekday - 1 : 6
+    }
+
+
+    function _extractLocaleMonths(short, locale) {
+      short = typeof(short) === "undefined" ? false : short;
+      locale = typeof(locale) === "root" ? false : locale;
+
+      if(short) {
+        return cldr ? cldr.extractMonthNames(locale).format.abbreviated : ['', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      }
+      else {
+        return cldr ? cldr.extractMonthNames(locale) : ['', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+      }
+    }
+
+    function _extractLocaleDays(short, locale) {
+      short = typeof(short) === "undefined" ? false : short;
+      locale = typeof(locale) === "root" ? false : locale;
+
+      if(short) {
+        return cldr ? cldr.extractDayNames(locale).format.abbreviated : ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+      }
+      else {
+        return cldr ? cldr.extractDayNames(locale) : ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+      }
     }
 
     /**
@@ -63,6 +95,20 @@
     }
 
     /**
+     * Sets the locale for use in extracting month and weekday names.
+     *
+     * @param {String} locale
+     * @throws {IllegalLocaleError} If the provided locale is invalid.
+     * @api public
+     */
+    function setlocale(locale) {
+      this.day_name   = _extractLocaleDays(false);
+      this.day_abbr   = _extractLocaleDays(true);
+      this.month_name = _extractLocaleMonths(false);
+      this.month_abbr = _extractLocaleMonths(true);
+    }
+
+    /**
      * Return weekday (0-6 ~ Mon-Sun) for year (1970-...), month (1-12),
      * day (1-31).
      *
@@ -75,6 +121,7 @@
       var date = new Date(year, month - 1, day);
       return _adjustWeekday(date.getDay());
     }
+
 
     /**
      * Base calendar class. This class doesn't do any formatting. It simply
@@ -327,6 +374,18 @@
       }
       return rows;
     }
+    /**
+     * Error indicating a nonexistent locale.
+     *
+     * @param {String} message
+     * @api public
+     */
+    function IllegalLocaleError(message) {
+      this.name = "IllegalLocaleError";
+      this.message = typeof(message) === "undefined" ? "Invalid locale specified." : message;
+    }
+    IllegalLocaleError.prototype = new Error();
+    IllegalLocaleError.prototype.constructor = IllegalLocaleError ;
 
     /**
      * Error indicating a month index specified outside of the expected range (1-12 ~ Jan-Dec).
@@ -348,7 +407,7 @@
      * @api public
      */
     function IllegalWeekdayError(message) {
-      this.name = "IllegalWeekdayError ";
+      this.name = "IllegalWeekdayError";
       this.message = typeof(message) === "undefined" ? "Invalid weekday specified." : message;
     }
     IllegalWeekdayError .prototype = new Error();
@@ -361,6 +420,7 @@
     calendar.leapdays   = leapdays;
     calendar.monthrange = monthrange;
     calendar.weekday    = weekday;
+    calendar.setlocale  = setlocale;
     calendar.Calendar   = Calendar;
 
     calendar.IllegalMonthError   = IllegalMonthError
@@ -386,6 +446,8 @@
     calendar.OCTOBER    = 10;
     calendar.NOVEMBER   = 11;
     calendar.DECEMBER   = 12;
+
+    calendar.setlocale();
 
     // Initialization methodology and noConflict courtesy node-uuid:
     // https://github.com/broofa/node-uuid

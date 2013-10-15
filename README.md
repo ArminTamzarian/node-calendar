@@ -31,6 +31,23 @@ var cal = new calendar.Calendar(calendar.SUNDAY);
 var yearCalendar = cal.yeardayscalendar(2004);
 ```
 
+## Locale
+
+Properly implementing locale data via Node or Javascript is a very difficult task due to the fact there there is currently no standard implementation of locale information across Javascript interpreters. As a result node-calendar does not ship with locale functionality available through the browser implementation outside of the default `en_US` locale.
+
+To enable extended locale functionality node-calendar utilizes the optional [cldr](https://github.com/papandreou/node-cldr) module. If node-calendar locates the [cldr](https://github.com/papandreou/node-cldr) module within the either the project-local or node-global module directories you can set your locale via the `calendar.setlocale()` method which will in turn populate the `calendar.month_name`, `calendar.month_abbr`, `calendar.day_name`, `calendar.day_abbr` properties. Note that this functionality is optional and without including this package the default `en_US` locale and its associated data will still be available.
+
+To enable extended locale functionality add the following to the `dependencies` section of your project's `package.json` file:
+
+```javascript
+"cldr" : ">=1.0.2"
+```
+
+Or install the package globally in your node dependencies directory:
+
+```
+npm install cldr -g
+```
 ## API
 
 ### calendar.isleap(`year`)
@@ -55,6 +72,14 @@ Return starting weekday (0-6 ~ Mon-Sun) and number of days (28-31) for year, mon
 
 Throws `IllegalMonthError` if the provided month is invalid.
 
+### calendar.setlocale(`[locale]`)
+
+Sets the locale for use in extracting month and weekday names.
+
+* `locale` - (String) Locale to set on the calendar object. `Default: en_US`
+
+Throws `IllegalLocaleError` if the provided locale is invalid.
+
 ### calendar.noconflict()
 
 (Browsers only) Set `calendar` property back to its previous value.
@@ -73,7 +98,7 @@ Return weekday (0-6 ~ Mon-Sun) for year (1970-...), month (1-12), day (1-31).
 
 Base calendar class. This class doesn't do any formatting. It simply provides data to subclasses.
 
-* `firstweekday` - (Number) Numerical day of the week the calendar weeks should start. (0=MON, 1=TUE, ...) Default: 0
+* `firstweekday` - (Number) Numerical day of the week the calendar weeks should start. (0=MON, 1=TUE, ...) `Default: 0`
 
 Throws `IllegalWeekdayError` if the provided weekday is invalid.
 
@@ -158,6 +183,12 @@ Return the data for the specified year ready for formatting (similar to yeardate
 
 ## Exceptions
 
+### calendar.IllegalLocaleError([`message`])
+
+Error indicating a month index specified outside of the expected range (1-12 ~ Jan-Dec).
+
+* `message` - (String) Optional custom error message.
+
 ### calendar.IllegalMonthError([`message`])
 
 Error indicating a month index specified outside of the expected range (1-12 ~ Jan-Dec).
@@ -169,6 +200,24 @@ Error indicating a month index specified outside of the expected range (1-12 ~ J
 Error indicating a weekday index specified outside of the expected range (0-6 ~ Mon-Sun).
 
 * `message` - (String) Optional custom error message.
+
+## Properties
+
+### calendar.day_name
+
+An array that represents the days of the week in the current locale.
+
+### calendar.day_abbr
+
+An array that represents the abbreviated days of the week in the current locale.
+
+### calendar.month_name
+
+An array that represents the months of the year in the current locale. This follows normal convention of January being month number 1, so it has a length of 13 and `month_name[0]` is the empty string.
+
+### calendar.month_abbr
+
+An array that represents the abbreviated months of the year in the current locale. This follows normal convention of January being month number 1, so it has a length of 13 and `month_abbr[0]` is the empty string.
 
 ## Constants
 
@@ -207,10 +256,18 @@ npm test
 
 ## Release notes
 
+### 0.1.2
+
+* Integration with [cldr](https://github.com/papandreou/node-cldr) to enable locale naming specifications.
+* Impletation of `calendar.month_name`, `calendar.month_abbr`, `calendar.day_name`, `calendar.day_abbr` properties.
+* Addition of `calendar.setlocale` and associated `'Sunday', IllegalWeekdayError`.
+* Reimplemented browser-based testing framework utilizing included [Mocha](http://visionmedia.github.io/mocha/) framework.
+* Fixed error in name property for `calendar.IllegalWeekdayError`.
+
 ### 0.1.1
 
-* Implementation of `isleap`, `leapdays`, `monthrange`, and `weekday` utility functions.
-* Addition of `IllegalMonthError` and `IllegalWeekdayError` exceptions.
+* Implementation of `calendar.isleap`, `calendar.leapdays`, `calendar.monthrange`, and `calendar.weekday` utility functions.
+* Addition of `calendar.IllegalMonthError` and `calendar.IllegalWeekdayError` exceptions.
 * Moved `Calendar` to `calendar.Calendar` to more closely match Python package scheme.
 * Refactored testing to [Mocha](http://visionmedia.github.io/mocha/) and removed browser-based testing framework.
 * Numerous unit tests added.
