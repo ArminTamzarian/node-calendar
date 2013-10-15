@@ -399,7 +399,7 @@ catch(err) {
     };
 
     /**
-     * Error indicating a nonexistent locale.
+     * Error indicating a nonexistent or unsupported locale specified.
      *
      * @param {String} message
      * @api public

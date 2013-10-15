@@ -180,7 +180,7 @@ Return the data for the specified year ready for formatting (similar to yeardate
 
 ### calendar.IllegalLocaleError([`message`])
 
-Error indicating a month index specified outside of the expected range (1-12 ~ Jan-Dec).
+Error indicating a nonexistent or unsupported locale specified.
 
 * `message` - (String) Optional custom error message.
 
@@ -243,7 +243,13 @@ An array that represents the abbreviated months of the year in the current local
 
 ## Testing
 
-In node.js
+In your browser:
+
+```
+open test/test.html
+```
+
+Or in node.js:
 
 ```
 npm test
