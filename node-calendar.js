@@ -21,32 +21,49 @@ catch(err) {
      */
     function _adjustWeekday(weekday) {
       return weekday > 0 ? weekday - 1 : 6
-    }
+    };
 
+    /**
+     * Extracts the wide or abbreviated day names for a specified locale.
+     * If cldr is not installed values default to that for locale en_US.
+     *
+     * @param {Boolean} abbr
+     * @param {String} locale
+     * @api private
+     */
+    function _extractLocaleDays(abbr, locale) {
+      short = typeof(abbr) === "undefined" ? false : abbr;
 
-    function _extractLocaleMonths(short, locale) {
-      short = typeof(short) === "undefined" ? false : short;
-      locale = typeof(locale) === "root" ? false : locale;
-
-      if(short) {
-        return cldr ? cldr.extractMonthNames(locale).format.abbreviated : ['', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-      }
-      else {
-        return cldr ? cldr.extractMonthNames(locale) : ['', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-      }
-    }
-
-    function _extractLocaleDays(short, locale) {
-      short = typeof(short) === "undefined" ? false : short;
-      locale = typeof(locale) === "root" ? false : locale;
-
-      if(short) {
+      if(abbr) {
         return cldr ? cldr.extractDayNames(locale).format.abbreviated : ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
       }
       else {
-        return cldr ? cldr.extractDayNames(locale) : ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+        return cldr ? cldr.extractDayNames(locale).format.wide : ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
       }
-    }
+    };
+
+    /**
+     * Extracts the wide or abbreviated month names for a specified locale.
+     * If cldr is not installed values default to that for locale en_US.
+     *
+     * @param {Boolean} abbr
+     * @param {String} locale
+     * @api private
+     */
+    function _extractLocaleMonths(abbr, locale) {
+      short = typeof(abbr) === "undefined" ? false : abbr;
+
+      var months = []
+      if(abbr) {
+        months = cldr ? cldr.extractMonthNames(locale).format.abbreviated : ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      }
+      else {
+        months = cldr ? cldr.extractMonthNames(locale).format.wide : ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+      }
+
+      months.unshift('');
+      return months;
+    };
 
     /**
      * Return true for leap years, false for non-leap years.
@@ -56,7 +73,7 @@ catch(err) {
      */
     function isleap(year) {
       return year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
-    }
+    };
 
     /**
      * Return number of leap years in range [y1, y2).
@@ -70,7 +87,7 @@ catch(err) {
       y1--;
       y2--;
       return (Math.floor(y2/4) - Math.floor(y1/4)) - (Math.floor(y2/100) - Math.floor(y1/100)) + (Math.floor(y2/400) - Math.floor(y1/400));
-    }
+    };
 
     /**
      * Return starting weekday (0-6 ~ Mon-Sun) and number of days (28-31) for
@@ -92,7 +109,7 @@ catch(err) {
       var ndays = mdays[month] + (month === 2 && isleap(year));
 
       return [day1, ndays];
-    }
+    };
 
     /**
      * Sets the locale for use in extracting month and weekday names.
@@ -102,11 +119,17 @@ catch(err) {
      * @api public
      */
     function setlocale(locale) {
-      this.day_name   = _extractLocaleDays(false);
-      this.day_abbr   = _extractLocaleDays(true);
-      this.month_name = _extractLocaleMonths(false);
-      this.month_abbr = _extractLocaleMonths(true);
-    }
+      locale = typeof(locale) === "undefined" ? "en_US" : locale;
+
+      if((cldr && (cldr.localeIds.indexOf(locale.replace(/-/g, '_').toLowerCase()) === -1)) || (!cldr && ((locale.replace(/-/g, '_').toLowerCase() !== "en_us")))) {
+         throw new IllegalLocaleError();
+      }
+
+      this.day_name   = _extractLocaleDays(false, locale);
+      this.day_abbr   = _extractLocaleDays(true, locale);
+      this.month_name = _extractLocaleMonths(false, locale);
+      this.month_abbr = _extractLocaleMonths(true, locale);
+    };
 
     /**
      * Return weekday (0-6 ~ Mon-Sun) for year (1970-...), month (1-12),
@@ -120,7 +143,7 @@ catch(err) {
     function weekday(year, month, day) {
       var date = new Date(year, month - 1, day);
       return _adjustWeekday(date.getDay());
-    }
+    };
 
 
     /**
@@ -140,7 +163,7 @@ catch(err) {
 
       this._oneday = 1000 * 60 * 60 * 24;
       this._onehour = 1000 * 60 * 60;
-    }
+    };
 
     /**
      * GET-er for firstweekday
@@ -149,7 +172,7 @@ catch(err) {
      */
     Calendar.prototype.getfirstweekday = function() {
       return this._firstweekday;
-    }
+    };
 
     /**
      * SET-er for firstweekday
@@ -164,7 +187,7 @@ catch(err) {
       }
 
       this._firstweekday = firstweekday;
-    }
+    };
 
     /**
      * Return an array for one week of weekday numbers starting with the
@@ -179,7 +202,7 @@ catch(err) {
       }
 
       return weekdays;
-    }
+    };
 
     /**
      * Return an array for one month. The array will contain Date
@@ -215,7 +238,7 @@ catch(err) {
       }
 
       return dates;
-    }
+    };
 
     /**
      * Like itermonthdates(), but will yield day numbers. For days outside
@@ -229,7 +252,7 @@ catch(err) {
       return this.itermonthdates(year, month).map(function(value){
         return value.getMonth() === month - 1 ? value.getDate() : 0;
       });
-    }
+    };
 
     /**
      * Like itermonthdates(), but will yield [day number, weekday number]
@@ -243,7 +266,7 @@ catch(err) {
       return this.itermonthdates(year, month).map(function(value){
         return value.getMonth() === month - 1 ? [value.getDate(), _adjustWeekday(value.getDay())] : [0, _adjustWeekday(value.getDay())];
       }, this);
-    }
+    };
 
     /**
      * Return a matrix (array of array) representing a month's calendar.
@@ -261,7 +284,7 @@ catch(err) {
       }
 
       return days;
-    }
+    };
 
     /**
      * Return a matrix representing a month's calendar.
@@ -279,7 +302,7 @@ catch(err) {
       }
 
       return days;
-    }
+    };
 
     /**
      * Return a matrix representing a month's calendar.
@@ -299,7 +322,7 @@ catch(err) {
       }
 
       return days;
-    }
+    };
 
     /**
      * Return the data for the specified year ready for formatting. The return
@@ -324,7 +347,7 @@ catch(err) {
         rows.push(months.slice(i, i + width));
       }
       return rows;
-    }
+    };
 
     /**
      * Return the data for the specified year ready for formatting (similar to
@@ -348,7 +371,7 @@ catch(err) {
         rows.push(months.slice(i, i + width));
       }
       return rows;
-    }
+    };
 
     /**
      * Return the data for the specified year ready for formatting (similar to
@@ -373,7 +396,8 @@ catch(err) {
         rows.push(months.slice(i, i + width));
       }
       return rows;
-    }
+    };
+
     /**
      * Error indicating a nonexistent locale.
      *
@@ -383,7 +407,7 @@ catch(err) {
     function IllegalLocaleError(message) {
       this.name = "IllegalLocaleError";
       this.message = typeof(message) === "undefined" ? "Invalid locale specified." : message;
-    }
+    };
     IllegalLocaleError.prototype = new Error();
     IllegalLocaleError.prototype.constructor = IllegalLocaleError ;
 
@@ -396,7 +420,7 @@ catch(err) {
     function IllegalMonthError(message) {
       this.name = "IllegalMonthError";
       this.message = typeof(message) === "undefined" ? "Invalid month specified." : message;
-    }
+    };
     IllegalMonthError.prototype = new Error();
     IllegalMonthError.prototype.constructor = IllegalMonthError;
 
@@ -409,7 +433,7 @@ catch(err) {
     function IllegalWeekdayError(message) {
       this.name = "IllegalWeekdayError";
       this.message = typeof(message) === "undefined" ? "Invalid weekday specified." : message;
-    }
+    };
     IllegalWeekdayError .prototype = new Error();
     IllegalWeekdayError .prototype.constructor = IllegalWeekdayError ;
 
@@ -423,8 +447,9 @@ catch(err) {
     calendar.setlocale  = setlocale;
     calendar.Calendar   = Calendar;
 
-    calendar.IllegalMonthError   = IllegalMonthError
-    calendar.IllegalWeekdayError = IllegalWeekdayError
+    calendar.IllegalLocaleError  = IllegalLocaleError;
+    calendar.IllegalMonthError   = IllegalMonthError;
+    calendar.IllegalWeekdayError = IllegalWeekdayError;
 
     calendar.MONDAY     = 0;
     calendar.TUESDAY    = 1;

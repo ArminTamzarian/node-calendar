@@ -43,11 +43,6 @@ To enable extended locale functionality add the following to the `dependencies` 
 "cldr" : ">=1.0.2"
 ```
 
-Or install the package globally in your node dependencies directory:
-
-```
-npm install cldr -g
-```
 ## API
 
 ### calendar.isleap(`year`)
@@ -258,9 +253,9 @@ npm test
 
 ### 0.1.2
 
-* Integration with [cldr](https://github.com/papandreou/node-cldr) to enable locale naming specifications.
+* Integration with [cldr](https://github.com/papandreou/node-cldr) to enable locale-specific month and day names.
 * Impletation of `calendar.month_name`, `calendar.month_abbr`, `calendar.day_name`, `calendar.day_abbr` properties.
-* Addition of `calendar.setlocale` and associated `'Sunday', IllegalWeekdayError`.
+* Addition of `calendar.setlocale` and associated `IllegalWeekdayError`.
 * Reimplemented browser-based testing framework utilizing included [Mocha](http://visionmedia.github.io/mocha/) framework.
 * Fixed error in name property for `calendar.IllegalWeekdayError`.
 

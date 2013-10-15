@@ -14,8 +14,35 @@
     </script>
     <script type="text/javascript" src="data/expected_year.js"></script>
     <script type="text/javascript" src="data/expected_locale.js"></script>
-    <script type="text/javascript" src="test.js"></script>
+    <script type="text/javascript" src="test-locale.js"></script>
+    <script type="text/javascript" src="test-calendar.js"></script>
     <script type="text/javascript" >
+        var assert = new (function() {
+          this.ok = function(value, message) {
+            if(!value) {
+              throw new Error(message);
+            }
+          };
+
+          this.equal = function(value, expected, message) {
+            if(value !== expected) {
+              throw new Error(message);
+            }
+          };
+
+          this.throws = function(func, error) {
+            try {
+              func();
+              throw new Error('Expected error not thrown.');
+            }
+            catch(err) {
+              if(err.name !== error.name) {
+                throw new Error('Incorrect error type.');
+              }
+            }
+          };
+        })();
+
         mocha.run();
     </script>
 </body>
