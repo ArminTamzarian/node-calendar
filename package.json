@@ -1,8 +1,8 @@
 {
   "name"            : "node-calendar",
-  "description"     : "A fairly straightforward port of the Python calendar package.",
+  "description"     : "A fairly straightforward port of the Python calendar package with extensions where appropriate.",
   "url"             : "https://github.com/ArminTamzarian/node-calendar",
-  "keywords"        : ["calendar", "python", "locale"],
+  "keywords"        : ["calendar", "python", "year", "month", "day", "locale", "isleap", "leapdays", "monthrange", "setlocale", "noconflict", "timegm", "weekday", "getfirstweekday", "setfirstweekday", "iterweekdays", "itermonthdates", "itermonthdays", "itermonthdays2", "monthdatescalendar", "monthdayscalendar", "monthdays2calendar", "yeardatescalendar", "yeardayscalendar", "yeardays2calendar"],
   "author"          : "Armin Tamzarian <tamzarian1989@gmail.com>",
   "scripts"         : {
     "test" : "mocha -R spec test/test-*.js"
@@ -13,7 +13,7 @@
     "type" : "git",
     "url"  : "https://github.com/ArminTamzarian/node-calendar"
   },
-  "version"         : "0.1.2",
+  "version"         : "0.1.3",
   "license"         : "MIT",
   "devDependencies" : {
     "mocha" : "1.13.0",

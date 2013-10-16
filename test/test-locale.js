@@ -23,7 +23,7 @@ function compare_locale_equality(day_name, day_abbr, month_name, month_abbr, res
 }
 
 describe('node-calendar locale tests.', function() {
-  describe('#setlocale', function(){
+  describe('#setlocale', function() {
     try {
       var cldr = require("cldr");
 

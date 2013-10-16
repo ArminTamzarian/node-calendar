@@ -13,6 +13,9 @@ catch(err) {
 
 (function() {
 
+    var _DAYS_IN_MONTH = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    var _DAYS_BEFORE_MONTH = [-1, 0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
+
     /**
      * Adjust the provided weekday index from the Javascript index scheme
      * (SUN=0, MON=1, ...) to the Python scheme (MON=0, TUE=1, ...)
@@ -66,6 +69,20 @@ catch(err) {
     };
 
     /**
+     * Calculates the ordinal time from given year, month, day values.
+     *
+     * @param {Number} year
+     * @param {Number} month
+     * @param {Number} day
+     * @api private
+     */
+    function _toordinal(year, month, day) {
+      var days_before_year = ((year - 1) * 365) + Math.floor((year - 1) / 4) - Math.floor((year - 1) / 100) + Math.floor((year - 1) / 400);
+      var days_before_month = _DAYS_BEFORE_MONTH[month] + (month > 2 && isleap(year) ? 1 : 0);
+      return (days_before_year + days_before_month + day);
+    }
+
+    /**
      * Return true for leap years, false for non-leap years.
      *
      * @param {Number} year
@@ -103,10 +120,8 @@ catch(err) {
         throw new IllegalMonthError();
       }
 
-      var mdays = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-
       var day1 = weekday(year, month, 1);
-      var ndays = mdays[month] + (month === 2 && isleap(year));
+      var ndays = _DAYS_IN_MONTH[month] + (month === 2 && isleap(year));
 
       return [day1, ndays];
     };
@@ -130,6 +145,42 @@ catch(err) {
       this.month_name = _extractLocaleMonths(false, locale);
       this.month_abbr = _extractLocaleMonths(true, locale);
     };
+
+    /**
+      * Unrelated but handy function to calculate Unix timestamp from GMT.
+      *
+      * @param {Array} tuple
+      * @throws {IllegalMonthError} If the provided month element is invalid.
+      * @throws {IllegalDayError} If the provided day element is invalid.
+      * @api public
+      */
+    function timegm(timegmt) {
+      var year   = timegmt[0];
+      var month  = timegmt[1];
+      var day    = timegmt[2];
+      var hour   = timegmt[3];
+      var minute = timegmt[4];
+      var second = timegmt[5];
+
+      if(month < 1 || month > 12) {
+        throw new IllegalMonthError();
+      }
+
+      if(day < 1 || day > _DAYS_IN_MONTH[month]) {
+        throw new IllegalDayError();
+      }
+
+      if(hour < 0 || hour > 23 || minute < 0 || minute > 59 || second < 0 || second > 59) {
+        throw new IllegalTimeError();
+      }
+
+      var days = _toordinal(year, month, 1) - 719163 + day - 1;
+      var hours = (days * 24) + hour;
+      var minutes = (hours * 60) + minute;
+      var seconds = (minutes * 60) + second;
+
+      return seconds;
+    }
 
     /**
      * Return weekday (0-6 ~ Mon-Sun) for year (1970-...), month (1-12),
@@ -409,7 +460,20 @@ catch(err) {
       this.message = typeof(message) === "undefined" ? "Invalid locale specified." : message;
     };
     IllegalLocaleError.prototype = new Error();
-    IllegalLocaleError.prototype.constructor = IllegalLocaleError ;
+    IllegalLocaleError.prototype.constructor = IllegalLocaleError;
+
+    /**
+     * Error indicating a day index specified outside of the valid range.
+     *
+     * @param {String} message
+     * @api public
+     */
+    function IllegalDayError(message) {
+      this.name = "IllegalDayError";
+      this.message = typeof(message) === "undefined" ? "Invalid day specified." : message;
+    };
+    IllegalDayError.prototype = new Error();
+    IllegalDayError.prototype.constructor = IllegalDayError;
 
     /**
      * Error indicating a month index specified outside of the expected range (1-12 ~ Jan-Dec).
@@ -423,6 +487,19 @@ catch(err) {
     };
     IllegalMonthError.prototype = new Error();
     IllegalMonthError.prototype.constructor = IllegalMonthError;
+
+    /**
+     * Error indicating a time element is outside of the valid range.
+     *
+     * @param {String} message
+     * @api public
+     */
+    function IllegalTimeError(message) {
+      this.name = "IllegalTimeError";
+      this.message = typeof(message) === "undefined" ? "Invalid time element specified." : message;
+    };
+    IllegalTimeError.prototype = new Error();
+    IllegalTimeError.prototype.constructor = IllegalTimeError;
 
     /**
      * Error indicating a weekday index specified outside of the expected range (0-6 ~ Mon-Sun).
@@ -445,10 +522,13 @@ catch(err) {
     calendar.monthrange = monthrange;
     calendar.weekday    = weekday;
     calendar.setlocale  = setlocale;
+    calendar.timegm     = timegm;
     calendar.Calendar   = Calendar;
 
     calendar.IllegalLocaleError  = IllegalLocaleError;
+    calendar.IllegalDayError     = IllegalDayError;
     calendar.IllegalMonthError   = IllegalMonthError;
+    calendar.IllegalTimeError    = IllegalTimeError;
     calendar.IllegalWeekdayError = IllegalWeekdayError;
 
     calendar.MONDAY     = 0;

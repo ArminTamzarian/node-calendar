@@ -37,7 +37,7 @@ function compare_month_equality(values, results) {
 }
 
 describe('node-calendar calendar tests.', function() {
-  describe('#isleap', function(){
+  describe('#isleap', function() {
     it('Make sure that the return is right for a few years.', function() {
       assert.ok(calendar.isleap(2000));
       assert.ok(!calendar.isleap(2001));
@@ -46,7 +46,7 @@ describe('node-calendar calendar tests.', function() {
     });
   });
 
-  describe('#leapdays', function(){
+  describe('#leapdays', function() {
     it('Verify some leap day test cases.', function() {
       assert.equal(calendar.leapdays(2010,2010), 0);
       assert.equal(calendar.leapdays(2010,2011), 0);
@@ -56,7 +56,7 @@ describe('node-calendar calendar tests.', function() {
     });
   });
 
-  describe('#monthrange', function(){
+  describe('#monthrange', function() {
     it('Tests valid lower boundary case.', function() {
       var range = calendar.monthrange(2004,1);
       assert.equal(range[0], 3);
@@ -94,6 +94,54 @@ describe('node-calendar calendar tests.', function() {
     });
   });
 
+  describe('#timegm', function() {
+    it('Verify some day time stamps.', function() {
+      assert.equal(calendar.timegm([1970, 1, 1, 0, 0, 0]), 0);
+      assert.equal(calendar.timegm([1999, 12, 31, 23, 59, 59]), 946684799);
+      assert.equal(calendar.timegm([2000, 1, 1, 0, 0, 0]), 946684800);
+      assert.equal(calendar.timegm([2000, 1, 2, 3, 4, 5]), 946782245);
+      assert.equal(calendar.timegm([2038, 1, 19, 3, 14, 7]), 2147483647);
+      assert.equal(calendar.timegm([2038, 1, 19, 3, 14, 8]), 2147483648);
+      assert.equal(calendar.timegm([2999, 1, 1, 0, 0, 0]), 32472144000);
+    });
+
+    it('Tests low invalid boundary case.', function() {
+      assert.throws(function() {
+          calendar.timegm([2000, 0, 1, 0, 0, 0]);
+      }, calendar.IllegalMonthError);
+      assert.throws(function() {
+          calendar.timegm([2000, 1, 0, 0, 0, 0]);
+      }, calendar.IllegalDayError);
+      assert.throws(function() {
+          calendar.timegm([2000, 1, 1, -1, 0, 0]);
+      }, calendar.IllegalTimeError);
+      assert.throws(function() {
+          calendar.timegm([2000, 1, 1, 0, -1, 0]);
+      }, calendar.IllegalTimeError);
+      assert.throws(function() {
+          calendar.timegm([2000, 1, 1, 0, 0, -1]);
+      }, calendar.IllegalTimeError);
+    });
+
+    it('Tests high invalid boundary case.', function() {
+      assert.throws(function() {
+          calendar.timegm([2000, 13, 1, 0, 0, 0]);
+      }, calendar.IllegalMonthError);
+      assert.throws(function() {
+          calendar.timegm([2000, 1, 40, 0, 0, 0]);
+      }, calendar.IllegalDayError);
+      assert.throws(function() {
+          calendar.timegm([2000, 1, 1, 24, 0, 0]);
+      }, calendar.IllegalTimeError);
+      assert.throws(function() {
+          calendar.timegm([2000, 1, 1, 0, 60, 0]);
+      }, calendar.IllegalTimeError);
+      assert.throws(function() {
+          calendar.timegm([2000, 1, 1, 0, 0, 60]);
+      }, calendar.IllegalTimeError);
+    });
+  });
+
   describe('Calendar', function() {
     var calendar_mon = new calendar.Calendar(calendar.MONDAY)
       , calendar_tue = new calendar.Calendar(calendar.TUESDAY)
@@ -104,7 +152,7 @@ describe('node-calendar calendar tests.', function() {
       , calendar_sun = new calendar.Calendar(calendar.SUNDAY)
       , calendar_nul = new calendar.Calendar();
 
-    describe('Calendar()', function(){
+    describe('Calendar()', function() {
       it('Tests low invalid boundary case.', function() {
         assert.throws(function() {
             calendar.Calendar(-1);
@@ -118,7 +166,7 @@ describe('node-calendar calendar tests.', function() {
       });
     });
 
-    describe('#setfirstweekday()', function(){
+    describe('#setfirstweekday()', function() {
       var calendar_test = new calendar.Calendar();
 
       it('Tests low invalid boundary case.', function() {
@@ -134,7 +182,7 @@ describe('node-calendar calendar tests.', function() {
       });
     })
 
-    describe('#yeardayscalendar()', function(){
+    describe('#yeardayscalendar()', function() {
       it('No-parameter calendar should equal MONDAY-based calendar.', function() {
         compare_year_equality(calendar_nul.yeardayscalendar(1969), calendar_mon.yeardayscalendar(1969));
         compare_year_equality(calendar_nul.yeardayscalendar(2004), calendar_mon.yeardayscalendar(2004));

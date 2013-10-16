@@ -1,6 +1,6 @@
 # node-calendar
 
-A fairly straightforward port of the Python [calendar](http://docs.python.org/3/library/calendar.html?highlight=calendar) package.
+A fairly straightforward port of the Python [calendar](http://docs.python.org/3/library/calendar.html?highlight=calendar) package with extensions where appropriate.
 
 This module allows you to output calendars like the Unix cal program, and provides additional useful functions related to the calendar. By default, these calendars have Monday as the first day of the week, and Sunday as the last (the European convention). Use setfirstweekday() to set the first day of the week to Sunday (6) or to any other weekday. Parameters that specify dates are given as integers.
 
@@ -67,6 +67,12 @@ Return starting weekday (0-6 ~ Mon-Sun) and number of days (28-31) for year, mon
 
 Throws `IllegalMonthError` if the provided month is invalid.
 
+### calendar.noconflict()
+
+(Browsers only) Set `calendar` property back to its previous value.
+
+Returns the node-calendar object.
+
 ### calendar.setlocale(`[locale]`)
 
 Sets the locale for use in extracting month and weekday names.
@@ -75,11 +81,15 @@ Sets the locale for use in extracting month and weekday names.
 
 Throws `IllegalLocaleError` if the provided locale is invalid.
 
-### calendar.noconflict()
+### calendar.timegm(`timegmt`)
 
-(Browsers only) Set `calendar` property back to its previous value.
+Unrelated but handy function to calculate Unix timestamp from GMT.
 
-Returns the node-calendar object.
+* `timegmt` - (Array) An array containing the elements from a [time structure](http://docs.python.org/3/library/time.html#time.struct_time) dataset. `[tm_year, tm_mon, tm_mday, tm_hour, tm_min, tm_sec]`
+
+Throws `IllegalMonthError` if the provided month element is invalid.
+Throws `IllegalDayError` if the provided day element is invalid.
+Throws `IllegalTimeError` if any of the the provided time elements are invalid.
 
 ### calendar.weekday(`year`, `month`, `day`)
 
@@ -184,9 +194,21 @@ Error indicating a nonexistent or unsupported locale specified.
 
 * `message` - (String) Optional custom error message.
 
+### calendar.IllegalDayError([`message`])
+
+Error indicating a day index specified outside of the valid range.
+
+* `message` - (String) Optional custom error message.
+
 ### calendar.IllegalMonthError([`message`])
 
 Error indicating a month index specified outside of the expected range (1-12 ~ Jan-Dec).
+
+* `message` - (String) Optional custom error message.
+
+### calendar.IllegalTimeError([`message`])
+
+Error indicating a time element is outside of the valid range.
 
 * `message` - (String) Optional custom error message.
 
@@ -256,6 +278,11 @@ npm test
 ```
 
 ## Release notes
+
+### 0.1.3
+
+* Implementation of `calendar.gmtime`
+* Addition of `calendar.IllegalDayError` and `calendar.IllegalTimeError` exceptions.
 
 ### 0.1.2
 
