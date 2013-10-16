@@ -64,8 +64,7 @@ Return starting weekday (0-6 ~ Mon-Sun) and number of days (28-31) for year, mon
 
 * `year` - (Number) Year for which the range should be calculated.
 * `month` - (Number) Month for which the range should be calculated.
-
-* Throws `IllegalMonthError` if the provided month is invalid.
+ - Throws `IllegalMonthError` if the provided month is invalid.
 
 ### calendar.noconflict()
 
@@ -78,18 +77,16 @@ Returns the node-calendar object.
 Sets the locale for use in extracting month and weekday names.
 
 * `locale` - (String) Locale to set on the calendar object. `Default: en_US`
-
-* Throws `IllegalLocaleError` if the provided locale is invalid.
+ - Throws `IllegalLocaleError` if the provided locale is invalid.
 
 ### calendar.timegm(`timegmt`)
 
 Unrelated but handy function to calculate Unix timestamp from GMT.
 
-* `timegmt` - (Array) An array containing the elements from a [time structure](http://docs.python.org/3/library/time.html#time.struct_time) dataset. `[tm_year, tm_mon, tm_mday, tm_hour, tm_min, tm_sec]`
-
-* Throws `IllegalMonthError` if the provided month element is invalid.
-* Throws `IllegalDayError` if the provided day element is invalid.
-* Throws `IllegalTimeError` if any of the the provided time elements are invalid.
+* `timegmt` - (Array) An array containing the elements from a [time structure](http://docs.python.org/3/library/time.html#time.struct_time) dataset. `Format: [tm_year, tm_mon, tm_mday, tm_hour, tm_min, tm_sec]`
+ - Throws `IllegalMonthError` if the provided month element is invalid.
+ - Throws `IllegalDayError` if the provided day element is invalid.
+ - Throws `IllegalTimeError` if any of the the provided time elements are invalid.
 
 ### calendar.weekday(`year`, `month`, `day`)
 
@@ -104,8 +101,7 @@ Return weekday (0-6 ~ Mon-Sun) for year (1970-...), month (1-12), day (1-31).
 Base calendar class. This class doesn't do any formatting. It simply provides data to subclasses.
 
 * `firstweekday` - (Number) Numerical day of the week the calendar weeks should start. (0=MON, 1=TUE, ...) `Default: 0`
-
-* Throws `IllegalWeekdayError` if the provided weekday is invalid.
+ - Throws `IllegalWeekdayError` if the provided weekday is invalid.
 
 ### calendar.Calendar.getfirstweekday()
 
@@ -116,8 +112,7 @@ Getter for firstweekday
 Setter for firstweekday
 
 * `firstweekday` - (Number) Numerical day of the week the calendar weeks should start. (0=MON, 1=TUE, ...)
-
-* Throws `IllegalWeekdayError` if the provided weekday is invalid.
+ - Throws `IllegalWeekdayError` if the provided weekday is invalid.
 
 ### calendar.Calendar.iterweekdays()
 
@@ -240,28 +235,32 @@ An array that represents the abbreviated months of the year in the current local
 
 ### Weekdays
 
-* `calendar.MONDAY     = 0`
-* `calendar.TUESDAY    = 1`
-* `calendar.WEDNESDAY  = 2`
-* `calendar.THURSDAY   = 3`
-* `calendar.FRIDAY     = 4`
-* `calendar.SATURDAY   = 5`
-* `calendar.SUNDAY     = 6`
+```
+calendar.MONDAY     = 0
+calendar.TUESDAY    = 1
+calendar.WEDNESDAY  = 2
+calendar.THURSDAY   = 3
+calendar.FRIDAY     = 4
+calendar.SATURDAY   = 5
+calendar.SUNDAY     = 6
+```
 
 ### Months
 
-* `calendar.JANUARY    =  1`
-* `calendar.FEBRUARY   =  2`
-* `calendar.MARCH      =  3`
-* `calendar.APRIL      =  4`
-* `calendar.MAY        =  5`
-* `calendar.JUNE       =  6`
-* `calendar.JULY       =  7`
-* `calendar.AUGUST     =  8`
-* `calendar.SEPTEMBER  =  9`
-* `calendar.OCTOBER    = 10`
-* `calendar.NOVEMBER   = 11`
-* `calendar.DECEMBER   = 12`
+```
+calendar.JANUARY    =  1
+calendar.FEBRUARY   =  2
+calendar.MARCH      =  3
+calendar.APRIL      =  4
+calendar.MAY        =  5
+calendar.JUNE       =  6
+calendar.JULY       =  7
+calendar.AUGUST     =  8
+calendar.SEPTEMBER  =  9
+calendar.OCTOBER    = 10
+calendar.NOVEMBER   = 11
+calendar.DECEMBER   = 12
+```
 
 ## Testing
 
