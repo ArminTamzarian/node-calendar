@@ -166,7 +166,7 @@
         throw new IllegalMonthError();
       }
 
-      if(day < 1 || day > _DAYS_IN_MONTH[month]) {
+      if(day < 1 || day > (_DAYS_IN_MONTH[month] + (month === 2 && isleap(year)))) {
         throw new IllegalDayError();
       }
 
@@ -189,9 +189,19 @@
      * @param {Number} year
      * @param {Number} month
      * @param {Number} day
+     * @throws {IllegalMonthError} If the provided month element is invalid.
+     * @throws {IllegalDayError} If the provided day element is invalid.
      * @api public
      */
     function weekday(year, month, day) {
+      if(month < 1 || month > 12) {
+        throw new IllegalMonthError();
+      }
+
+      if(day < 1 || day > (_DAYS_IN_MONTH[month] + (month === 2 && isleap(year)))) {
+        throw new IllegalDayError();
+      }
+
       var date = new Date(year, month - 1, day);
       return _adjustWeekday(date.getDay());
     };
@@ -265,6 +275,10 @@
      * @api public
      */
     Calendar.prototype.itermonthdates = function(year, month) {
+      if(month < 1 || month > 12) {
+        throw new IllegalMonthError();
+      }
+
       var date = new Date(year, month - 1, 1);
       var day = _adjustWeekday(date.getDay());
       var days = (day - this._firstweekday)  >= 0 ? (day - this._firstweekday) % 7 : 7 + (day - this._firstweekday);

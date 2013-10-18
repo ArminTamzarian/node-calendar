@@ -92,6 +92,7 @@ describe('node-calendar calendar tests.', function() {
           calendar.monthrange(2004,13);
       }, calendar.IllegalMonthError);
     });
+
   });
 
   describe('#timegm', function() {
@@ -103,6 +104,7 @@ describe('node-calendar calendar tests.', function() {
       assert.equal(calendar.timegm([2038, 1, 19, 3, 14, 7]), 2147483647);
       assert.equal(calendar.timegm([2038, 1, 19, 3, 14, 8]), 2147483648);
       assert.equal(calendar.timegm([2999, 1, 1, 0, 0, 0]), 32472144000);
+      assert.equal(calendar.timegm([2004, 2, 29, 0, 0, 0]), 1078012800);
     });
 
     it('Tests low invalid boundary case.', function() {
@@ -139,6 +141,32 @@ describe('node-calendar calendar tests.', function() {
       assert.throws(function() {
           calendar.timegm([2000, 1, 1, 0, 0, 60]);
       }, calendar.IllegalTimeError);
+    });
+  });
+
+  describe('#weekday', function() {
+    it('Make sure that the return is right for a few dates.', function() {
+      assert.equal(calendar.weekday(1970, 1, 1), 3);
+      assert.equal(calendar.weekday(2004, 2, 29), 6);
+    });
+
+    it('Tests low invalid boundary case.', function() {
+      assert.throws(function() {
+          calendar.weekday(2000, 0, 1);
+      }, calendar.IllegalMonthError);
+      assert.throws(function() {
+          calendar.weekday(2000, 1, 0);
+      }, calendar.IllegalDayError);
+    });
+
+    it('Tests high invalid boundary case.', function() {
+      assert.throws(function() {
+          calendar.weekday(2000, 13, 1);
+
+      }, calendar.IllegalMonthError);
+      assert.throws(function() {
+          calendar.weekday(2000, 1, 32);
+      }, calendar.IllegalDayError);
     });
   });
 
@@ -182,6 +210,33 @@ describe('node-calendar calendar tests.', function() {
       });
     })
 
+    describe('#getfirstweekday()', function() {
+    });
+
+    describe('#iterweekdays()', function() {
+    });
+
+    describe('#itermonthdates()', function() {
+    });
+
+    describe('#itermonthdays()', function() {
+    });
+
+    describe('#itermonthdays2()', function() {
+    });
+
+    describe('#monthdatescalendar()', function() {
+    });
+
+    describe('#monthdayscalendar()', function() {
+    });
+
+    describe('#monthdays2calendar()', function() {
+    });
+
+    describe('#yeardatescalendar()', function() {
+    });
+
     describe('#yeardayscalendar()', function() {
       it('No-parameter calendar should equal MONDAY-based calendar.', function() {
         compare_year_equality(calendar_nul.yeardayscalendar(1969), calendar_mon.yeardayscalendar(1969));
@@ -220,5 +275,8 @@ describe('node-calendar calendar tests.', function() {
         compare_year_equality(calendar_sun.yeardayscalendar(2039), expected_year["2039"]["SUN"]);
       });
     })
+
+    describe('#yeardays2calendar()', function() {
+    });
   })
 });

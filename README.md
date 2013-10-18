@@ -51,12 +51,24 @@ Return true for leap years, false for non-leap years.
 
 * `year` - (Number) Year to test.
 
+Example:
+```javascript
+calendar.isleap(2001); // -> false
+calendar.isleap(2000); // -> true
+```
+
 ### calendar.leapdays(`y1`, `y2`)
 
 Return number of leap years in range [y1, y2). Assumes y1 <= y2.
 
 * `y1` - (Number) Beginning year in the range to test.
 * `y2` - (Number) Ending year in the range to test.
+
+Example:
+```javascript
+calendar.leapdays(1990, 2050); // -> 15
+calendar.leapdays(2000, 2005); // -> 2
+```
 
 ### calendar.monthrange(`year`, `month`)
 
@@ -65,6 +77,14 @@ Return starting weekday (0-6 ~ Mon-Sun) and number of days (28-31) for year, mon
 * `year` - (Number) Year for which the range should be calculated.
 * `month` - (Number) Month for which the range should be calculated.
  - Throws `IllegalMonthError` if the provided month is invalid.
+
+Example:
+```javascript
+calendar.monthrange(1980, 9);  // -> [ 0, 30 ]
+calendar.monthrange(2004, 2);  // -> [ 6, 29 ]
+calendar.monthrange(2038, 12); // -> [ 2, 31 ]
+calendar.monthrange(2013, 13); // -> Throws IllegalMonthError
+```
 
 ### calendar.noconflict()
 
@@ -79,6 +99,17 @@ Sets the locale for use in extracting month and weekday names.
 * `locale` - (String) Locale to set on the calendar object. `Default: en_US`
  - Throws `IllegalLocaleError` if the provided locale is invalid.
 
+Example:
+```javascript
+calendar.setlocale();
+calendar.day_name; // -> [ 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday' ]
+
+calendar.setlocale('fr_FR');
+calendar.day_name; // -> [ 'dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi' ]
+
+calendar.setlocale('xx_XX'); // -> Throws IllegalLocaleError
+```
+
 ### calendar.timegm(`timegmt`)
 
 Unrelated but handy function to calculate Unix timestamp from GMT.
@@ -88,6 +119,16 @@ Unrelated but handy function to calculate Unix timestamp from GMT.
  - Throws `IllegalDayError` if the provided day element is invalid.
  - Throws `IllegalTimeError` if any of the the provided time elements are invalid.
 
+Example:
+```javascript
+calendar.timegm([1970, 1, 1, 0, 0, 0]); // -> 0
+calendar.timegm([2001, 1, 2, 3, 4, 5]); // -> 978404645
+
+calendar.timegm([2001, 13, 1, 0, 0, 0]); // Throws IllegalMonthError
+calendar.timegm([2001, 2, 29, 0, 0, 0]); // Throws IllegalDayError
+calendar.timegm([2001, 1, 1, 24, 0, 0]); // Throws IllegalTimeError
+```
+
 ### calendar.weekday(`year`, `month`, `day`)
 
 Return weekday (0-6 ~ Mon-Sun) for year (1970-...), month (1-12), day (1-31).
@@ -95,6 +136,17 @@ Return weekday (0-6 ~ Mon-Sun) for year (1970-...), month (1-12), day (1-31).
 * `year` - (Number) Year for which the weekday should be calculated.
 * `month` - (Number) Month for which the weekday should be calculated.
 * `day` - (Number) Day for which the weekday should be calculated.
+ - Throws `IllegalMonthError` if the provided month element is invalid.
+ - Throws `IllegalDayError` if the provided day element is invalid.
+
+Example:
+```javascript
+calendar.weekday(1970, 1, 1);  // -> 3
+calendar.weekday(2004, 2, 29), // -> 6
+
+calendar.weekday(2001, 0, 1);  // -> Throws IllegalMonthError
+calendar.weekday(2001, 2, 29); // -> Throws IllegalDayError
+```
 
 ### calendar.Calendar([`firstweekday`])
 
@@ -103,9 +155,23 @@ Base calendar class. This class doesn't do any formatting. It simply provides da
 * `firstweekday` - (Number) Numerical day of the week the calendar weeks should start. (0=MON, 1=TUE, ...) `Default: 0`
  - Throws `IllegalWeekdayError` if the provided weekday is invalid.
 
+Example:
+```javascript
+var cal = calendar.Calendar();
+cal.getfirstweekday(); // -> 0
+
+var cal = calendar.Calendar(-1); // -> Throws IllegalWeekdayError
+```
+
 ### calendar.Calendar.getfirstweekday()
 
 Getter for firstweekday
+
+Example:
+```javascript
+var cal = calendar.Calendar(6);
+cal.getfirstweekday(); // -> 6
+```
 
 ### calendar.Calendar.setfirstweekday(`firstweekday`)
 
@@ -114,9 +180,26 @@ Setter for firstweekday
 * `firstweekday` - (Number) Numerical day of the week the calendar weeks should start. (0=MON, 1=TUE, ...)
  - Throws `IllegalWeekdayError` if the provided weekday is invalid.
 
+Example:
+```javascript
+var cal = calendar.Calendar(6);
+cal.getfirstweekday();  // -> 6
+
+cal.setfirstweekday(3);
+cal.getfirstweekday();  // -> 3
+
+cal.setfirstweekday(7); // -> Throws IllegalWeekdayError
+```
+
 ### calendar.Calendar.iterweekdays()
 
 Return an array for one week of weekday numbers starting with the configured first one.
+
+Example:
+```javascript
+new calendar.Calendar(3).iterweekdays();
+// -> [ 3, 4, 5, 6, 0, 1, 2 ]
+```
 
 ### calendar.Calendar.itermonthdates(`year`, `month`)
 
@@ -124,6 +207,25 @@ Return an array for one month. The array will contain Date values and will alway
 
 * `year` - (Number) Year for which the calendar should be generated.
 * `month` - (Number) Month for which the calendar should be generated.
+ - Throws `IllegalMonthError` if the provided month is invalid.
+
+Example:
+```javascript
+new calendar.Calendar(3).itermonthdates(2004, 2);
+// -> [ Thu Jan 29 2004 00:00:00 GMT-0600 (CST),
+//      Fri Jan 30 2004 00:00:00 GMT-0600 (CST),
+//      Sat Jan 31 2004 00:00:00 GMT-0600 (CST),
+//      Sun Feb 01 2004 00:00:00 GMT-0600 (CST),
+//      Mon Feb 02 2004 00:00:00 GMT-0600 (CST),
+//      ...
+//      Sun Feb 29 2004 00:00:00 GMT-0600 (CST),
+//      Mon Mar 01 2004 00:00:00 GMT-0600 (CST),
+//      Tue Mar 02 2004 00:00:00 GMT-0600 (CST),
+//      Wed Mar 03 2004 00:00:00 GMT-0600 (CST) ]
+
+new calendar.Calendar(3).itermonthdates(2004, 13);
+// -> Throws IllegalMonthError
+```
 
 ### calendar.Calendar.itermonthdays(`year`, `month`)
 
@@ -131,6 +233,16 @@ Like itermonthdates(), but will yield day numbers. For days outside the specifie
 
 * `year` - (Number) Year for which the calendar should be generated.
 * `month` - (Number) Month for which the calendar should be generated.
+ - Throws `IllegalMonthError` if the provided month is invalid.
+
+Example:
+```javascript
+new calendar.Calendar(3).itermonthdays(2004, 2);
+// -> [ 0, 0, 0, 1, 2, 3, 4, 5, 6, ... 27, 28, 29, 0, 0, 0 ]
+
+new calendar.Calendar(3).itermonthdays(2004, 13);
+// -> Throws IllegalMonthError
+```
 
 ### calendar.Calendar.itermonthdays2(`year`, `month`)
 
@@ -138,6 +250,24 @@ Like itermonthdates(), but will yield [day number, weekday number] arrays. For d
 
 * `year` - (Number) Year for which the calendar should be generated.
 * `month` - (Number) Month for which the calendar should be generated.
+ - Throws `IllegalMonthError` if the provided month is invalid.
+
+Example:
+```javascript
+new calendar.Calendar(1).itermonthdays2(2012, 5);
+// -> [ [ 1,  1 ],
+//      [ 2,  2 ],
+//      [ 3,  3 ],
+//      ...
+//      [ 31, 3 ],
+//      [ 0,  4 ],
+//      [ 0,  5 ],
+//      [ 0,  6 ],
+//      [ 0,  0 ] ]
+
+new calendar.Calendar(1).itermonthdays2(2012, 13);
+// -> Throws IllegalMonthError
+```
 
 ### calendar.Calendar.monthdatescalendar(`year`, `month`)
 
@@ -145,6 +275,29 @@ Return a matrix (array of array) representing a month's calendar. Each row repre
 
 * `year` - (Number) Year for which the calendar should be generated.
 * `month` - (Number) Month for which the calendar should be generated.
+ - Throws `IllegalMonthError` if the provided month is invalid.
+
+Example:
+```javascript
+new calendar.Calendar(1).monthdatescalendar(2013, 5);
+// -> [ [ Tue Apr 30 2013 00:00:00 GMT-0500 (CDT),
+//        Wed May 01 2013 00:00:00 GMT-0500 (CDT),
+//        Thu May 02 2013 00:00:00 GMT-0500 (CDT),
+//        Fri May 03 2013 00:00:00 GMT-0500 (CDT),
+//        Sat May 04 2013 00:00:00 GMT-0500 (CDT),
+//        Sun May 05 2013 00:00:00 GMT-0500 (CDT),
+//        Mon May 06 2013 00:00:00 GMT-0500 (CDT) ],
+//      [ Tue May 07 2013 00:00:00 GMT-0500 (CDT),
+//        Wed May 08 2013 00:00:00 GMT-0500 (CDT),
+//        ...
+//        Fri May 31 2013 00:00:00 GMT-0500 (CDT),
+//        Sat Jun 01 2013 00:00:00 GMT-0500 (CDT),
+//        Sun Jun 02 2013 00:00:00 GMT-0500 (CDT),
+//        Mon Jun 03 2013 00:00:00 GMT-0500 (CDT) ] ]
+
+new calendar.Calendar(1).monthdatescalendar(2013, 0);
+// -> Throws IllegalMonthError
+```
 
 ### calendar.Calendar.monthdayscalendar(`year`, `month`)
 
@@ -152,6 +305,20 @@ Return a matrix representing a month's calendar. Each row represents a week; day
 
 * `year` - (Number) Year for which the calendar should be generated.
 * `month` - (Number) Month for which the calendar should be generated.
+ - Throws `IllegalMonthError` if the provided month is invalid.
+
+Example:
+```javascript
+new calendar.Calendar(1).monthdayscalendar(2013, 5);
+// -> [ [  0,  1,  2,  3,  4,  5,  6 ],
+//      [  7,  8,  9, 10, 11, 12, 13 ],
+//      [ 14, 15, 16, 17, 18, 19, 20 ],
+//      [ 21, 22, 23, 24, 25, 26, 27 ],
+//      [ 28, 29, 30, 31,  0,  0,  0 ] ]
+
+new calendar.Calendar(1).monthdayscalendar(2013, 13);
+// -> Throws IllegalMonthError
+```
 
 ### calendar.Calendar.monthdays2calendar(`year`, `month`)
 
@@ -159,6 +326,20 @@ Return a matrix representing a month's calendar. Each row represents a week; wee
 
 * `year` - (Number) Year for which the calendar should be generated.
 * `month` - (Number) Month for which the calendar should be generated.
+ - Throws `IllegalMonthError` if the provided month is invalid.
+
+Example:
+```javascript
+new calendar.Calendar(1).monthdays2calendar(2013, 5);
+// -> [ [ [  0, 1 ], [  1, 2 ], [  2, 3 ], [  3, 4 ], [  4, 5 ], [  5, 6 ], [  6, 0 ] ],
+//      [ [  7, 1 ], [  8, 2 ], [  9, 3 ], [ 10, 4 ], [ 11, 5 ], [ 12, 6 ], [ 13, 0 ] ],
+//      [ [ 14, 1 ], [ 15, 2 ], [ 16, 3 ], [ 17, 4 ], [ 18, 5 ], [ 19, 6 ], [ 20, 0 ] ],
+//      [ [ 21, 1 ], [ 22, 2 ], [ 23, 3 ], [ 24, 4 ], [ 25, 5 ], [ 26, 6 ], [ 27, 0 ] ],
+//      [ [ 28, 1 ], [ 29, 2 ], [ 30, 3 ], [ 31, 4 ], [  0, 5 ], [  0, 6 ], [  0, 0 ] ] ]
+
+new calendar.Calendar(1).monthdays2calendar(2013, 13);
+// -> Throws IllegalMonthError
+```
 
 ### calendar.Calendar.yeardatescalendar(`year`, [`width`])
 
@@ -167,6 +348,23 @@ Return the data for the specified year ready for formatting. The return value is
 * `year` - (Number) Year for which the calendar should be generated.
 * `width` - (Number) The number of months to include in each row. Default: 3
 
+Example:
+```javascript
+new calendar.Calendar(1).yeardatescalendar(2018, 6);
+// -> [ [ [ [Object], [Object], [Object], [Object], [Object], [Object] ],
+//        [ [Object], [Object], [Object], [Object], [Object] ],
+//        [ [Object], [Object], [Object], [Object], [Object] ],
+//        [ [Object], [Object], [Object], [Object], [Object] ],
+//        [ [Object], [Object], [Object], [Object], [Object] ],
+//        [ [Object], [Object], [Object], [Object], [Object] ] ],
+//      [ [ [Object], [Object], [Object], [Object], [Object], [Object] ],
+//        [ [Object], [Object], [Object], [Object], [Object] ],
+//        [ [Object], [Object], [Object], [Object], [Object] ],
+//        [ [Object], [Object], [Object], [Object], [Object], [Object] ],
+//        [ [Object], [Object], [Object], [Object], [Object] ],
+//        [ [Object], [Object], [Object], [Object], [Object] ] ] ]
+```
+
 ### calendar.Calendar.yeardayscalendar(`year`, [`width`])
 
 Return the data for the specified year ready for formatting (similar to yeardatescalendar()). Entries in the week arrays are day numbers. Day numbers outside this month are zero.
@@ -174,12 +372,45 @@ Return the data for the specified year ready for formatting (similar to yeardate
 * `year` - (Number) Year for which the calendar should be generated.
 * `width` - (Number) The number of months to include in each row. Default: 3
 
+Example:
+```javascript
+new calendar.Calendar(1).yeardayscalendar(2018, 6);
+// -> [ [ [ [Object], [Object], [Object], [Object], [Object], [Object] ],
+//        [ [Object], [Object], [Object], [Object], [Object] ],
+//        [ [Object], [Object], [Object], [Object], [Object] ],
+//        [ [Object], [Object], [Object], [Object], [Object] ],
+//        [ [Object], [Object], [Object], [Object], [Object] ],
+//        [ [Object], [Object], [Object], [Object], [Object] ] ],
+//      [ [ [Object], [Object], [Object], [Object], [Object], [Object] ],
+//        [ [Object], [Object], [Object], [Object], [Object] ],
+//        [ [Object], [Object], [Object], [Object], [Object] ],
+//        [ [Object], [Object], [Object], [Object], [Object], [Object] ],
+//        [ [Object], [Object], [Object], [Object], [Object] ],
+//        [ [Object], [Object], [Object], [Object], [Object] ] ] ]```
+
 ### calendar.Calendar.yeardays2calendar(`year`, [`width`])
 
 Return the data for the specified year ready for formatting (similar to yeardatescalendar()). Entries in the week arrays are [day number, weekday number] arrays. Day numbers outside this month are zero.
 
 * `year` - (Number) Year for which the calendar should be generated.
 * `width` - (Number) The number of months to include in each row. Default: 3
+
+Example:
+```javascript
+new calendar.Calendar(1).yeardays2calendar(2018, 6);
+// -> [ [ [ [Object], [Object], [Object], [Object], [Object], [Object] ],
+//        [ [Object], [Object], [Object], [Object], [Object] ],
+//        [ [Object], [Object], [Object], [Object], [Object] ],
+//        [ [Object], [Object], [Object], [Object], [Object] ],
+//        [ [Object], [Object], [Object], [Object], [Object] ],
+//        [ [Object], [Object], [Object], [Object], [Object] ] ],
+//      [ [ [Object], [Object], [Object], [Object], [Object], [Object] ],
+//        [ [Object], [Object], [Object], [Object], [Object] ],
+//        [ [Object], [Object], [Object], [Object], [Object] ],
+//        [ [Object], [Object], [Object], [Object], [Object], [Object] ],
+//        [ [Object], [Object], [Object], [Object], [Object] ],
+//        [ [Object], [Object], [Object], [Object], [Object] ] ] ]
+```
 
 ## Exceptions
 
@@ -277,6 +508,11 @@ npm test
 ```
 
 ## Release notes
+
+### 0.1.4
+
+* Extended error checking.
+* Updated API documentation to include examples.
 
 ### 0.1.3
 
