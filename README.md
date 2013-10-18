@@ -386,7 +386,8 @@ new calendar.Calendar(1).yeardayscalendar(2018, 6);
 //        [ [Object], [Object], [Object], [Object], [Object] ],
 //        [ [Object], [Object], [Object], [Object], [Object], [Object] ],
 //        [ [Object], [Object], [Object], [Object], [Object] ],
-//        [ [Object], [Object], [Object], [Object], [Object] ] ] ]```
+//        [ [Object], [Object], [Object], [Object], [Object] ] ] ]
+```
 
 ### calendar.Calendar.yeardays2calendar(`year`, [`width`])
 
