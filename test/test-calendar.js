@@ -1,39 +1,56 @@
 if(!this.calendar) {
-  assert          = require("assert");
-  calendar        = require('../node-calendar');
-  expected_year   = require("./data/expected_year");
+  assert                     = require("assert");
+  calendar                   = require('../node-calendar');
+  expected_yeardatescalendar = require("./data/expected_yeardatescalendar");
+  expected_yeardayscalendar  = require("./data/expected_yeardayscalendar");
+  expected_yeardays2calendar = require("./data/expected_yeardays2calendar");
 }
 
-function compare_year_equality(values, results) {
+function compare_year_equality(values, results, equality_function) {
   for(var month_row_i = 0; month_row_i < values.length; month_row_i++) {
     for(var month_i=0; month_i < values[month_row_i].length; month_i++) {
       assert.equal(
         values[month_row_i][month_i].length,
         results[month_row_i][month_i].length,
-        'Length of test results month week size is that of the expected results.'
+        'Length of test results month week size is that of the expected results. (' + values[month_row_i][month_i].length + ' !== ' + results[month_row_i][month_i].length + ')'
       );
 
-      compare_month_equality(values[month_row_i][month_i], results[month_row_i][month_i]);
+      compare_month_equality(values[month_row_i][month_i], results[month_row_i][month_i], equality_function);
     }
   }
 }
 
-function compare_month_equality(values, results) {
+function compare_month_equality(values, results, equality_function) {
     for(var week_i=0; week_i < values.length; week_i++) {
       assert.equal(
         values[week_i].length,
         7,
-        'Length of all weeks should be 7.'
+        'Length of all weeks should be 7.  (' + values[week_i].length + ' !== 7)'
       );
 
       for(var day_i=0; day_i < values[week_i].length; day_i++) {
-        assert.equal(
-          values[week_i][day_i],
-          results[week_i][day_i],
-          'Ensure value of each test result day is that of the expected results.'
-        );
+        equality_function(values[week_i][day_i], results[week_i][day_i]);
       }
     }
+}
+
+function compare_day_dates(value, result) {
+  assert.equal(value.getTime(), result.getTime(), 'Ensure value of each test result day is that of the expected result. (' + value.getTime() + ' !== ' + result.getTime() + ')');
+}
+
+function compare_day_yeardatescalendar(value, result) {
+  assert.equal(value.getFullYear(),  result[0], 'Ensure value of each test result year is that of the expected result. (' + value.getFullYear() + ' !== ' + result[0] + ')');
+  assert.equal(value.getMonth(),     result[1], 'Ensure value of each test result month is that of the expected result. (' + value.getMonth() + ' !== ' + result[1] + ')');
+  assert.equal(value.getDate(),      result[2], 'Ensure value of each test result day is that of the expected result. (' + value.getDate() + ' !== ' + result[2] + ')');
+}
+
+function compare_day_yeardayscalendar(value, result) {
+  assert.equal(value, result, 'Ensure value of each test result day is that of the expected results.');
+}
+
+function compare_day_yeardays2calendar(value, result) {
+  assert.equal(value[0], result[0], 'Ensure value of each test result day is that of the expected result. (' + value[0] + ' !== ' + result[0] + ')');
+  assert.equal(value[1], result[1], 'Ensure value of each test result weekday is that of the expected result. (' + value[1] + ' !== ' + result[1] + ')');
 }
 
 describe('node-calendar calendar tests.', function() {
@@ -211,72 +228,234 @@ describe('node-calendar calendar tests.', function() {
     })
 
     describe('#getfirstweekday()', function() {
+      it('Make sure that the return is right for a few first days.', function() {
+        var calendar_test = new calendar.Calendar();
+        assert.equal(calendar_test.getfirstweekday(), 0);
+
+        calendar_test.setfirstweekday(4);
+        assert.equal(calendar_test.getfirstweekday(), 4);
+      });
     });
 
     describe('#iterweekdays()', function() {
+      it('Make sure that the return is right for a few first days.', function() {
+        var results = new calendar.Calendar(3).iterweekdays();
+        var expected = [ 3, 4, 5, 6, 0, 1, 2 ];
+
+        for(var i=0; i < results.length; i++) {
+          assert.equal(results[i], expected[i]);
+        }
+      });
     });
 
     describe('#itermonthdates()', function() {
+      var calendar_test = new calendar.Calendar();
+
+      it('Tests low invalid boundary case.', function() {
+        assert.throws(function() {
+            calendar_test.itermonthdates(2000, 0);
+        }, calendar.IllegalMonthError);
+      });
+
+      it('Tests high invalid boundary case.', function() {
+        assert.throws(function() {
+            calendar_test.itermonthdates(2000, 13);
+        }, calendar.IllegalMonthError);
+      });
     });
 
     describe('#itermonthdays()', function() {
+      var calendar_test = new calendar.Calendar();
+
+      it('Tests low invalid boundary case.', function() {
+        assert.throws(function() {
+            calendar_test.itermonthdays(2000, 0);
+        }, calendar.IllegalMonthError);
+      });
+
+      it('Tests high invalid boundary case.', function() {
+        assert.throws(function() {
+            calendar_test.itermonthdays(2000, 13);
+        }, calendar.IllegalMonthError);
+      });
     });
 
     describe('#itermonthdays2()', function() {
+      var calendar_test = new calendar.Calendar();
+
+      it('Tests low invalid boundary case.', function() {
+        assert.throws(function() {
+            calendar_test.itermonthdays2(2000, 0);
+        }, calendar.IllegalMonthError);
+      });
+
+      it('Tests high invalid boundary case.', function() {
+        assert.throws(function() {
+            calendar_test.itermonthdays2(2000, 13);
+        }, calendar.IllegalMonthError);
+      });
     });
 
     describe('#monthdatescalendar()', function() {
+      var calendar_test = new calendar.Calendar();
+
+      it('Tests low invalid boundary case.', function() {
+        assert.throws(function() {
+            calendar_test.monthdatescalendar(2000, 0);
+        }, calendar.IllegalMonthError);
+      });
+
+      it('Tests high invalid boundary case.', function() {
+        assert.throws(function() {
+            calendar_test.monthdatescalendar(2000, 13);
+        }, calendar.IllegalMonthError);
+      });
     });
 
     describe('#monthdayscalendar()', function() {
+      var calendar_test = new calendar.Calendar();
+
+      it('Tests low invalid boundary case.', function() {
+        assert.throws(function() {
+            calendar_test.monthdayscalendar(2000, 0);
+        }, calendar.IllegalMonthError);
+      });
+
+      it('Tests high invalid boundary case.', function() {
+        assert.throws(function() {
+            calendar_test.monthdayscalendar(2000, 13);
+        }, calendar.IllegalMonthError);
+      });
     });
 
     describe('#monthdays2calendar()', function() {
+      var calendar_test = new calendar.Calendar();
+
+      it('Tests low invalid boundary case.', function() {
+        assert.throws(function() {
+            calendar_test.monthdays2calendar(2000, 0);
+        }, calendar.IllegalMonthError);
+      });
+
+      it('Tests high invalid boundary case.', function() {
+        assert.throws(function() {
+            calendar_test.monthdays2calendar(2000, 13);
+        }, calendar.IllegalMonthError);
+      });
     });
 
     describe('#yeardatescalendar()', function() {
+      it('No-parameter calendar should equal MONDAY-based calendar.', function() {
+        compare_year_equality(calendar_nul.yeardatescalendar(1969), calendar_mon.yeardatescalendar(1969), compare_day_dates);
+        compare_year_equality(calendar_nul.yeardatescalendar(2004), calendar_mon.yeardatescalendar(2004), compare_day_dates);
+        compare_year_equality(calendar_nul.yeardatescalendar(2039), calendar_mon.yeardatescalendar(2039), compare_day_dates);
+      });
+
+      it('1969y tests should be entirely equal.', function() {
+        compare_year_equality(calendar_mon.yeardatescalendar(1969), expected_yeardatescalendar["1969"]["MON"], compare_day_yeardatescalendar);
+        compare_year_equality(calendar_tue.yeardatescalendar(1969), expected_yeardatescalendar["1969"]["TUE"], compare_day_yeardatescalendar);
+        compare_year_equality(calendar_wed.yeardatescalendar(1969), expected_yeardatescalendar["1969"]["WED"], compare_day_yeardatescalendar);
+        compare_year_equality(calendar_thu.yeardatescalendar(1969), expected_yeardatescalendar["1969"]["THU"], compare_day_yeardatescalendar);
+        compare_year_equality(calendar_fri.yeardatescalendar(1969), expected_yeardatescalendar["1969"]["FRI"], compare_day_yeardatescalendar);
+        compare_year_equality(calendar_sat.yeardatescalendar(1969), expected_yeardatescalendar["1969"]["SAT"], compare_day_yeardatescalendar);
+        compare_year_equality(calendar_sun.yeardatescalendar(1969), expected_yeardatescalendar["1969"]["SUN"], compare_day_yeardatescalendar);
+      });
+
+      it('2004y tests should be entirely equal.', function() {
+        compare_year_equality(calendar_mon.yeardatescalendar(2004), expected_yeardatescalendar["2004"]["MON"], compare_day_yeardatescalendar);
+        compare_year_equality(calendar_tue.yeardatescalendar(2004), expected_yeardatescalendar["2004"]["TUE"], compare_day_yeardatescalendar);
+        compare_year_equality(calendar_wed.yeardatescalendar(2004), expected_yeardatescalendar["2004"]["WED"], compare_day_yeardatescalendar);
+        compare_year_equality(calendar_thu.yeardatescalendar(2004), expected_yeardatescalendar["2004"]["THU"], compare_day_yeardatescalendar);
+        compare_year_equality(calendar_fri.yeardatescalendar(2004), expected_yeardatescalendar["2004"]["FRI"], compare_day_yeardatescalendar);
+        compare_year_equality(calendar_sat.yeardatescalendar(2004), expected_yeardatescalendar["2004"]["SAT"], compare_day_yeardatescalendar);
+        compare_year_equality(calendar_sun.yeardatescalendar(2004), expected_yeardatescalendar["2004"]["SUN"], compare_day_yeardatescalendar);
+      });
+
+      it('2039y tests should be entirely equal.', function() {
+        compare_year_equality(calendar_mon.yeardatescalendar(2039), expected_yeardatescalendar["2039"]["MON"], compare_day_yeardatescalendar);
+        compare_year_equality(calendar_tue.yeardatescalendar(2039), expected_yeardatescalendar["2039"]["TUE"], compare_day_yeardatescalendar);
+        compare_year_equality(calendar_wed.yeardatescalendar(2039), expected_yeardatescalendar["2039"]["WED"], compare_day_yeardatescalendar);
+        compare_year_equality(calendar_thu.yeardatescalendar(2039), expected_yeardatescalendar["2039"]["THU"], compare_day_yeardatescalendar);
+        compare_year_equality(calendar_fri.yeardatescalendar(2039), expected_yeardatescalendar["2039"]["FRI"], compare_day_yeardatescalendar);
+        compare_year_equality(calendar_sat.yeardatescalendar(2039), expected_yeardatescalendar["2039"]["SAT"], compare_day_yeardatescalendar);
+        compare_year_equality(calendar_sun.yeardatescalendar(2039), expected_yeardatescalendar["2039"]["SUN"], compare_day_yeardatescalendar);
+      });
     });
 
     describe('#yeardayscalendar()', function() {
       it('No-parameter calendar should equal MONDAY-based calendar.', function() {
-        compare_year_equality(calendar_nul.yeardayscalendar(1969), calendar_mon.yeardayscalendar(1969));
-        compare_year_equality(calendar_nul.yeardayscalendar(2004), calendar_mon.yeardayscalendar(2004));
-        compare_year_equality(calendar_nul.yeardayscalendar(2039), calendar_mon.yeardayscalendar(2039));
+        compare_year_equality(calendar_nul.yeardayscalendar(1969), calendar_mon.yeardayscalendar(1969), compare_day_yeardayscalendar);
+        compare_year_equality(calendar_nul.yeardayscalendar(2004), calendar_mon.yeardayscalendar(2004), compare_day_yeardayscalendar);
+        compare_year_equality(calendar_nul.yeardayscalendar(2039), calendar_mon.yeardayscalendar(2039), compare_day_yeardayscalendar);
       });
 
       it('1969y tests should be entirely equal.', function() {
-
-        compare_year_equality(calendar_mon.yeardayscalendar(1969), expected_year["1969"]["MON"]);
-        compare_year_equality(calendar_tue.yeardayscalendar(1969), expected_year["1969"]["TUE"]);
-        compare_year_equality(calendar_wed.yeardayscalendar(1969), expected_year["1969"]["WED"]);
-        compare_year_equality(calendar_thu.yeardayscalendar(1969), expected_year["1969"]["THU"]);
-        compare_year_equality(calendar_fri.yeardayscalendar(1969), expected_year["1969"]["FRI"]);
-        compare_year_equality(calendar_sat.yeardayscalendar(1969), expected_year["1969"]["SAT"]);
-        compare_year_equality(calendar_sun.yeardayscalendar(1969), expected_year["1969"]["SUN"]);
+        compare_year_equality(calendar_mon.yeardayscalendar(1969), expected_yeardayscalendar["1969"]["MON"], compare_day_yeardayscalendar);
+        compare_year_equality(calendar_tue.yeardayscalendar(1969), expected_yeardayscalendar["1969"]["TUE"], compare_day_yeardayscalendar);
+        compare_year_equality(calendar_wed.yeardayscalendar(1969), expected_yeardayscalendar["1969"]["WED"], compare_day_yeardayscalendar);
+        compare_year_equality(calendar_thu.yeardayscalendar(1969), expected_yeardayscalendar["1969"]["THU"], compare_day_yeardayscalendar);
+        compare_year_equality(calendar_fri.yeardayscalendar(1969), expected_yeardayscalendar["1969"]["FRI"], compare_day_yeardayscalendar);
+        compare_year_equality(calendar_sat.yeardayscalendar(1969), expected_yeardayscalendar["1969"]["SAT"], compare_day_yeardayscalendar);
+        compare_year_equality(calendar_sun.yeardayscalendar(1969), expected_yeardayscalendar["1969"]["SUN"], compare_day_yeardayscalendar);
       });
 
       it('2004y tests should be entirely equal.', function() {
-        compare_year_equality(calendar_mon.yeardayscalendar(2004), expected_year["2004"]["MON"]);
-        compare_year_equality(calendar_tue.yeardayscalendar(2004), expected_year["2004"]["TUE"]);
-        compare_year_equality(calendar_wed.yeardayscalendar(2004), expected_year["2004"]["WED"]);
-        compare_year_equality(calendar_thu.yeardayscalendar(2004), expected_year["2004"]["THU"]);
-        compare_year_equality(calendar_fri.yeardayscalendar(2004), expected_year["2004"]["FRI"]);
-        compare_year_equality(calendar_sat.yeardayscalendar(2004), expected_year["2004"]["SAT"]);
-        compare_year_equality(calendar_sun.yeardayscalendar(2004), expected_year["2004"]["SUN"]);
+        compare_year_equality(calendar_mon.yeardayscalendar(2004), expected_yeardayscalendar["2004"]["MON"], compare_day_yeardayscalendar);
+        compare_year_equality(calendar_tue.yeardayscalendar(2004), expected_yeardayscalendar["2004"]["TUE"], compare_day_yeardayscalendar);
+        compare_year_equality(calendar_wed.yeardayscalendar(2004), expected_yeardayscalendar["2004"]["WED"], compare_day_yeardayscalendar);
+        compare_year_equality(calendar_thu.yeardayscalendar(2004), expected_yeardayscalendar["2004"]["THU"], compare_day_yeardayscalendar);
+        compare_year_equality(calendar_fri.yeardayscalendar(2004), expected_yeardayscalendar["2004"]["FRI"], compare_day_yeardayscalendar);
+        compare_year_equality(calendar_sat.yeardayscalendar(2004), expected_yeardayscalendar["2004"]["SAT"], compare_day_yeardayscalendar);
+        compare_year_equality(calendar_sun.yeardayscalendar(2004), expected_yeardayscalendar["2004"]["SUN"], compare_day_yeardayscalendar);
       });
 
       it('2039y tests should be entirely equal.', function() {
-        compare_year_equality(calendar_mon.yeardayscalendar(2039), expected_year["2039"]["MON"]);
-        compare_year_equality(calendar_tue.yeardayscalendar(2039), expected_year["2039"]["TUE"]);
-        compare_year_equality(calendar_wed.yeardayscalendar(2039), expected_year["2039"]["WED"]);
-        compare_year_equality(calendar_thu.yeardayscalendar(2039), expected_year["2039"]["THU"]);
-        compare_year_equality(calendar_fri.yeardayscalendar(2039), expected_year["2039"]["FRI"]);
-        compare_year_equality(calendar_sat.yeardayscalendar(2039), expected_year["2039"]["SAT"]);
-        compare_year_equality(calendar_sun.yeardayscalendar(2039), expected_year["2039"]["SUN"]);
+        compare_year_equality(calendar_mon.yeardayscalendar(2039), expected_yeardayscalendar["2039"]["MON"], compare_day_yeardayscalendar);
+        compare_year_equality(calendar_tue.yeardayscalendar(2039), expected_yeardayscalendar["2039"]["TUE"], compare_day_yeardayscalendar);
+        compare_year_equality(calendar_wed.yeardayscalendar(2039), expected_yeardayscalendar["2039"]["WED"], compare_day_yeardayscalendar);
+        compare_year_equality(calendar_thu.yeardayscalendar(2039), expected_yeardayscalendar["2039"]["THU"], compare_day_yeardayscalendar);
+        compare_year_equality(calendar_fri.yeardayscalendar(2039), expected_yeardayscalendar["2039"]["FRI"], compare_day_yeardayscalendar);
+        compare_year_equality(calendar_sat.yeardayscalendar(2039), expected_yeardayscalendar["2039"]["SAT"], compare_day_yeardayscalendar);
+        compare_year_equality(calendar_sun.yeardayscalendar(2039), expected_yeardayscalendar["2039"]["SUN"], compare_day_yeardayscalendar);
       });
     })
 
     describe('#yeardays2calendar()', function() {
+      it('No-parameter calendar should equal MONDAY-based calendar.', function() {
+        compare_year_equality(calendar_nul.yeardays2calendar(1969), calendar_mon.yeardays2calendar(1969), compare_day_yeardays2calendar);
+        compare_year_equality(calendar_nul.yeardays2calendar(2004), calendar_mon.yeardays2calendar(2004), compare_day_yeardays2calendar);
+        compare_year_equality(calendar_nul.yeardays2calendar(2039), calendar_mon.yeardays2calendar(2039), compare_day_yeardays2calendar);
+      });
+
+      it('1969y tests should be entirely equal.', function() {
+        compare_year_equality(calendar_mon.yeardays2calendar(1969), expected_yeardays2calendar["1969"]["MON"], compare_day_yeardays2calendar);
+        compare_year_equality(calendar_tue.yeardays2calendar(1969), expected_yeardays2calendar["1969"]["TUE"], compare_day_yeardays2calendar);
+        compare_year_equality(calendar_wed.yeardays2calendar(1969), expected_yeardays2calendar["1969"]["WED"], compare_day_yeardays2calendar);
+        compare_year_equality(calendar_thu.yeardays2calendar(1969), expected_yeardays2calendar["1969"]["THU"], compare_day_yeardays2calendar);
+        compare_year_equality(calendar_fri.yeardays2calendar(1969), expected_yeardays2calendar["1969"]["FRI"], compare_day_yeardays2calendar);
+        compare_year_equality(calendar_sat.yeardays2calendar(1969), expected_yeardays2calendar["1969"]["SAT"], compare_day_yeardays2calendar);
+        compare_year_equality(calendar_sun.yeardays2calendar(1969), expected_yeardays2calendar["1969"]["SUN"], compare_day_yeardays2calendar);
+      });
+
+      it('2004y tests should be entirely equal.', function() {
+        compare_year_equality(calendar_mon.yeardays2calendar(2004), expected_yeardays2calendar["2004"]["MON"], compare_day_yeardays2calendar);
+        compare_year_equality(calendar_tue.yeardays2calendar(2004), expected_yeardays2calendar["2004"]["TUE"], compare_day_yeardays2calendar);
+        compare_year_equality(calendar_wed.yeardays2calendar(2004), expected_yeardays2calendar["2004"]["WED"], compare_day_yeardays2calendar);
+        compare_year_equality(calendar_thu.yeardays2calendar(2004), expected_yeardays2calendar["2004"]["THU"], compare_day_yeardays2calendar);
+        compare_year_equality(calendar_fri.yeardays2calendar(2004), expected_yeardays2calendar["2004"]["FRI"], compare_day_yeardays2calendar);
+        compare_year_equality(calendar_sat.yeardays2calendar(2004), expected_yeardays2calendar["2004"]["SAT"], compare_day_yeardays2calendar);
+        compare_year_equality(calendar_sun.yeardays2calendar(2004), expected_yeardays2calendar["2004"]["SUN"], compare_day_yeardays2calendar);
+      });
+
+      it('2039y tests should be entirely equal.', function() {
+        compare_year_equality(calendar_mon.yeardays2calendar(2039), expected_yeardays2calendar["2039"]["MON"], compare_day_yeardays2calendar);
+        compare_year_equality(calendar_tue.yeardays2calendar(2039), expected_yeardays2calendar["2039"]["TUE"], compare_day_yeardays2calendar);
+        compare_year_equality(calendar_wed.yeardays2calendar(2039), expected_yeardays2calendar["2039"]["WED"], compare_day_yeardays2calendar);
+        compare_year_equality(calendar_thu.yeardays2calendar(2039), expected_yeardays2calendar["2039"]["THU"], compare_day_yeardays2calendar);
+        compare_year_equality(calendar_fri.yeardays2calendar(2039), expected_yeardays2calendar["2039"]["FRI"], compare_day_yeardays2calendar);
+        compare_year_equality(calendar_sat.yeardays2calendar(2039), expected_yeardays2calendar["2039"]["SAT"], compare_day_yeardays2calendar);
+        compare_year_equality(calendar_sun.yeardays2calendar(2039), expected_yeardays2calendar["2039"]["SUN"], compare_day_yeardays2calendar);
+      });
     });
   })
 });

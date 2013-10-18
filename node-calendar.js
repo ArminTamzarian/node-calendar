@@ -274,6 +274,7 @@
      * @param {Number} month
      * @api public
      */
+
     Calendar.prototype.itermonthdates = function(year, month) {
       if(month < 1 || month > 12) {
         throw new IllegalMonthError();
@@ -304,7 +305,6 @@
 
       return dates;
     };
-
     /**
      * Like itermonthdates(), but will yield day numbers. For days outside
      * the specified month the day number is 0.
@@ -453,7 +453,7 @@
 
       var months = [];
       for(var month = 1; month <= 12; month++) {
-        months.push(this.monthdays2calendar (year, month));
+        months.push(this.monthdays2calendar(year, month));
       }
 
       var rows = [];

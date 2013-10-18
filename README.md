@@ -31,7 +31,9 @@ var cal = new calendar.Calendar(calendar.SUNDAY);
 var yearCalendar = cal.yeardayscalendar(2004);
 ```
 
-## Locale
+## Additional Notes
+
+### Locale
 
 Properly implementing locale data via Node or Javascript is a very difficult task due to the fact there there is currently no standard implementation of locale information across Javascript interpreters. As a result node-calendar does not ship with locale functionality available through the browser implementation outside of the default `en_US` locale.
 
@@ -42,6 +44,12 @@ To enable extended locale functionality add the following to the `dependencies` 
 ```javascript
 "cldr" : ">=1.0.2"
 ```
+
+### Epoch
+
+Although not explicitly stated all functions are compatible with dates and times ocurring after the [Unix epoch](http://en.wikipedia.org/wiki/Unix_time) (00:00:00 UTC, Thursday, 1 January 1970). Due to certain interpretations of [section 15.9](http://es5.github.io/#x15.9) of the official EMCAScript specification by disparate developers of Javascript interpreters date and time functionality before the Unix epoch is indeterminate at best.
+
+For the time being all testing for node-calendar delegates to the data returned by that of the Python class resulting in full compliance for both [NodeJS](http://nodejs.org/) and related [V8](https://code.google.com/p/v8/) browser interpreters. However, note that although all tested browsers appear to be fully unit test compliant for dates after the Unix epoch proper functionality before this date can not be guaranteed. To verify functionality in your browser of choice see [Testing](#testing) to execute the node-calendar unit tests.
 
 ## API
 
@@ -165,7 +173,7 @@ var cal = calendar.Calendar(-1); // -> Throws IllegalWeekdayError
 
 ### calendar.Calendar.getfirstweekday()
 
-Getter for firstweekday
+Getter for firstweekday.
 
 Example:
 ```javascript
@@ -175,7 +183,7 @@ cal.getfirstweekday(); // -> 6
 
 ### calendar.Calendar.setfirstweekday(`firstweekday`)
 
-Setter for firstweekday
+Setter for firstweekday.
 
 * `firstweekday` - (Number) Numerical day of the week the calendar weeks should start. (0=MON, 1=TUE, ...)
  - Throws `IllegalWeekdayError` if the provided weekday is invalid.
@@ -513,7 +521,9 @@ npm test
 ### 0.1.4
 
 * Extended error checking.
+* Massively updated unit testing.
 * Updated API documentation to include examples.
+* Noted inherent errors for some Javascript interpreters for dates before the Unix epoch.
 
 ### 0.1.3
 
