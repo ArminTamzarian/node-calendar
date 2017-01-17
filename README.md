@@ -535,7 +535,7 @@ npm test
 * Integration with [cldr](https://github.com/papandreou/node-cldr) to enable locale-specific month and day names.
 * Impletation of `calendar.month_name`, `calendar.month_abbr`, `calendar.day_name`, `calendar.day_abbr` properties.
 * Addition of `calendar.setlocale` and associated `IllegalWeekdayError`.
-* Reimplemented browser-based testing framework utilizing included [Mocha](http://visionmedia.github.io/mocha/) framework.
+* Reimplemented browser-based testing framework utilizing included [Mocha](http://mochajs.org/) framework.
 * Fixed error in name property for `calendar.IllegalWeekdayError`.
 
 ### 0.1.1
@@ -543,7 +543,7 @@ npm test
 * Implementation of `calendar.isleap`, `calendar.leapdays`, `calendar.monthrange`, and `calendar.weekday` utility functions.
 * Addition of `calendar.IllegalMonthError` and `calendar.IllegalWeekdayError` exceptions.
 * Moved `Calendar` to `calendar.Calendar` to more closely match Python package scheme.
-* Refactored testing to [Mocha](http://visionmedia.github.io/mocha/) and removed browser-based testing framework.
+* Refactored testing to [Mocha](http://mochajs.org/) and removed browser-based testing framework.
 * Numerous unit tests added.
 
 ### 0.1.0
