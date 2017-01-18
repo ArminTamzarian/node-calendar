@@ -22,11 +22,11 @@ var expected_locale = {
   "es_ES" : {
     "month" : {
       "full": ['', 'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'],
-      "abbr" : ['', 'ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic']
+      "abbr" : ['', 'ene.', 'feb.', 'mar.', 'abr.', 'may.', 'jun.', 'jul.', 'ago.', 'sept.', 'oct.', 'nov.', 'dic.']
     },
     "day" : {
       "full" : ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'],
-      "abbr" : ['dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb']
+      "abbr" : ['dom.', 'lun.', 'mar.', 'mié.', 'jue.', 'vie.', 'sáb.']
     }
   }
 }
