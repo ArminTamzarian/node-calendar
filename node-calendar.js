@@ -35,8 +35,6 @@
      * @api private
      */
     function _extractLocaleDays(abbr, locale) {
-      short = typeof(abbr) === "undefined" ? false : abbr;
-
       if(abbr) {
         return cldr ? cldr.extractDayNames(locale).format.abbreviated : ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
       }
@@ -54,8 +52,6 @@
      * @api private
      */
     function _extractLocaleMonths(abbr, locale) {
-      short = typeof(abbr) === "undefined" ? false : abbr;
-
       var months = []
       if(abbr) {
         months = cldr ? cldr.extractMonthNames(locale).format.abbreviated : ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
