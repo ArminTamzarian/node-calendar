@@ -1,7 +1,12 @@
 language: node_js
 node_js:
   - "node"
+  - "lts/*"
   - "iojs"
+  - "10"
+  - "9"
+  - "8"
+  - "7"
   - "6"
   - "5"
   - "4"
