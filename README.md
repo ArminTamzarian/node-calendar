@@ -518,6 +518,14 @@ npm test
 
 ## Release notes
 
+### 0.1.5
+
+* [PR#4](https://github.com/ArminTamzarian/node-calendar/pull/4): Remove unused variable and reserved js word 'short' ([ilyanew](https://github.com/ilyanew)).
+* Updated dependencies to resolve a known vulnerability in uglify-js.
+* Updated `cldr` dependency.
+* Updated supported NodeJS versions to mainline releases.
+* Updated CI testing configuration.
+
 ### 0.1.4
 
 * Extended error checking.
